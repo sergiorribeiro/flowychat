@@ -1,0 +1,17 @@
+@mixin fill-all($position) {
+  position: $position;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+#editor {
+  @include fill-all(absolute);
+
+  canvas {
+    @include fill-all(absolute);
+    height: 100%;
+    width: 100%;
+  }
+}
