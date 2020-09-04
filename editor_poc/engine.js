@@ -54,18 +54,56 @@ var flowNgin = flowNgin || {
       }
     },
 
-    Connection: function() {
-      
+    Connection: function(from, to, label) {
+      this.from = from;
+      this.to = to;
+      this.label = label;
     },
 
     Step: function() {
       flowNgin.objects.Drawable.call(this);
       this.exits = [];
+      this.tasks = [];
+      this.title = "untitled";
 
       this.draw = function(ctx) {
+        const padding = 10;
+        const x = this.position.x;
+        const y = this.position.y;
+
+        this.size.width = 0;
+        this.size.height = 0;
+
+        const titleFontSize = 15;
+        ctx.font = `${titleFontSize}px Arial`;
+        this.size.width += padding;
+        let maxWidth = 0;
+        maxWidth = ctx.measureText(this.id).width;
+        // check exits's width
+          // here, on a loop
+        this.size.width += maxWidth;
+        this.size.width += padding;
+
+        this.size.height += padding;
+        this.size.height += titleFontSize;
+        this.size.height += padding;
+
+        const w = this.size.width;
+        const h = this.size.height;
+
         ctx.save();
-        ctx.fillStyle = "#00ff00";
-        ctx.fillRect(this.position.x, this.position.y, this.size.width, this.size.height);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(x, y, w, h);
+
+        ctx.beginPath();
+        ctx.rect(x, y, w, h);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#000";
+        ctx.stroke();
+
+        ctx.fillStyle = "#000";
+        ctx.fillText(this.id, x + 10, y + 10 + titleFontSize);
+
         ctx.restore();
       }
     }
@@ -79,18 +117,20 @@ var flowNgin = flowNgin || {
     const self = this;
     const FPS = fps;
     const SNAP = 5;
+    const CLICKTMR = null;
     const STATE = {
       holdPoint: null,
       mouseDown: false,
       selectedStep: undefined,
       holdStep: undefined,
       holdOffset: undefined,
-      heldMovement: false
+      heldMovement: false,
+      consecutiveClicks: 0
     };
     const _data = new flowNgin.Data();
     let running = false;
     const _ctx = canvas.getContext("2d", {alpha: false});
-    _ctx.imageSmoothingEnabled = true;
+    _ctx.imageSmoothingEnabled = false;
 
     const updateViewport = function() {
       let cr = _ctx.canvas.getBoundingClientRect();
@@ -118,6 +158,12 @@ var flowNgin = flowNgin || {
       });
     }
 
+    const getStepById = function(id) {
+      return _data.steps.find(function(step) {
+        return step.id === id;
+      });
+    }
+
     self.start = function() {
       running = true;
       cycle();
@@ -127,12 +173,22 @@ var flowNgin = flowNgin || {
       running = false;
     };
 
-    self.addStep = function() {
+    self.addStep = function(position) {
       const step = new flowNgin.objects.Step();
-      step.position = new flowNgin.objects.Point(30,30);
-      step.size = new flowNgin.objects.Size(30,30);
+      step.size = new flowNgin.objects.Size(0,0);
+      step.position = position;
       _data.steps.push(step);
+      console.log(step);
       return step.id;
+    }
+
+    self.addConnector = function(parent, from, to, label) {
+      const step = getStepById(parent);
+      if(step) {
+        const connector = new flowNgin.objects.Connection(getStepById(from), getStepById(to), label);
+        step.exits.push(connector);
+        console.log(step);
+      }
     }
 
     const handleInteraction = function(event) {
@@ -151,12 +207,23 @@ var flowNgin = flowNgin || {
           }
         break;
         case "mouseup":
+          STATE.consecutiveClicks += 1;
+          clearTimeout(CLICKTMR);
+          setTimeout(function(){
+            STATE.consecutiveClicks = 0;
+          },350);
           STATE.mouseDown = false;
           STATE.holdPoint = undefined;
           STATE.holdStep = undefined;
           STATE.holdOffset = undefined;
           if(!STATE.heldMovement) {
             STATE.selectedStep = getStepUnder(cursorPosition);
+          }
+          if(STATE.consecutiveClicks >= 2) {
+            STATE.consecutiveClicks = 0;
+            if(!STATE.selectedStep) {
+              self.addStep(cursorPosition);
+            }
           }
         break;
         case "mousemove":
@@ -171,8 +238,6 @@ var flowNgin = flowNgin || {
           }
         break;
       }
-
-      console.log(STATE.selectedStep);
     }
 
     const cycle = function() {
