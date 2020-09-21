@@ -55,6 +55,7 @@ var flowNgin = flowNgin || {
     },
 
     Connection: function(from, to, label) {
+      this.id = flowNgin.helpers.uuid();
       this.from = from;
       this.to = to;
       this.label = label;
@@ -62,6 +63,7 @@ var flowNgin = flowNgin || {
 
     Step: function() {
       flowNgin.objects.Drawable.call(this);
+      this.sequentialId = 0;
       this.exits = [];
       this.tasks = [];
       this.title = "untitled";
@@ -78,7 +80,7 @@ var flowNgin = flowNgin || {
         ctx.font = `${titleFontSize}px Arial`;
         this.size.width += padding;
         let maxWidth = 0;
-        maxWidth = ctx.measureText(this.id).width;
+        maxWidth = ctx.measureText(this.title).width;
         // check exits's width
           // here, on a loop
         this.size.width += maxWidth;
@@ -102,7 +104,7 @@ var flowNgin = flowNgin || {
         ctx.stroke();
 
         ctx.fillStyle = "#000";
-        ctx.fillText(this.id, x + 10, y + 10 + titleFontSize);
+        ctx.fillText(this.title, x + 10, y + 10 + titleFontSize);
 
         ctx.restore();
       }
@@ -113,7 +115,7 @@ var flowNgin = flowNgin || {
     this.steps = [];
   },
 
-  Engine: function(canvas, fps) {
+  Engine: function(canvas, emitter, fps) {
     const self = this;
     const FPS = fps;
     const SNAP = 5;
@@ -125,12 +127,15 @@ var flowNgin = flowNgin || {
       holdStep: undefined,
       holdOffset: undefined,
       heldMovement: false,
-      consecutiveClicks: 0
+      consecutiveClicks: 0,
+      stepSequencer: 1
     };
     const _data = new flowNgin.Data();
     let running = false;
     const _ctx = canvas.getContext("2d", {alpha: false});
     _ctx.imageSmoothingEnabled = false;
+
+    var stepSelectedEvent = new Event("fngin_step_selected");
 
     const updateViewport = function() {
       let cr = _ctx.canvas.getBoundingClientRect();
@@ -177,8 +182,9 @@ var flowNgin = flowNgin || {
       const step = new flowNgin.objects.Step();
       step.size = new flowNgin.objects.Size(0,0);
       step.position = position;
+      step.sequentialId = STATE.stepSequencer;
       _data.steps.push(step);
-      console.log(step);
+      STATE.stepSequencer += 1;
       return step.id;
     }
 
@@ -187,8 +193,35 @@ var flowNgin = flowNgin || {
       if(step) {
         const connector = new flowNgin.objects.Connection(getStepById(from), getStepById(to), label);
         step.exits.push(connector);
-        console.log(step);
+        return connector.id;
       }
+    }
+
+    self.removeConnector = function(id) {
+
+    }
+
+    self.updateConnector = function(id, data) {
+      
+    }
+
+    self.updateStep = function(id, data) {
+      
+    }
+
+    self.addTask = function(parent, data) {
+      return {
+        step: "123",
+        task: "456"
+      }
+    }
+
+    self.updateTask = function(id, data) {
+
+    }
+
+    self.selectedStep = function() {
+      return STATE.selectedStep;
     }
 
     const handleInteraction = function(event) {
@@ -218,6 +251,7 @@ var flowNgin = flowNgin || {
           STATE.holdOffset = undefined;
           if(!STATE.heldMovement) {
             STATE.selectedStep = getStepUnder(cursorPosition);
+            document.querySelector(emitter).dispatchEvent(stepSelectedEvent);
           }
           if(STATE.consecutiveClicks >= 2) {
             STATE.consecutiveClicks = 0;

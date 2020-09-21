@@ -9,8 +9,37 @@
     <script defer src="editor.js"></script>
   </head>
   <body>
+    <emitter></emitter>
     <div id="editor">
       <canvas></canvas>
+    </div>
+    <div id="selection">
+      <label>title</label>
+      <input type="text" data-action="selection.update.title" />
+      <label>step</label>
+      <textarea data-action="selection.update.step"></textarea>
+      <label>exits <a data-action="selection.add.exit">(add)</a></label>
+      <div id="exits"></div>
+      <label>tasks <a data-action="selection.add.task">(add)</a></label>
+      <div id="tasks"></div>
+      <button data-action="selection.delete">delete</button>
+    </div>
+    <div style="display: none">
+      <div data-structure="task">
+        <label>from</label>
+        <select></select>
+        <label>task</label>
+        <input type="text"/>
+        <button>delete</button>
+      </div>
+      <div data-structure="exit">
+        <label>from</label>
+        <select></select>
+        <label>exit answer</label>
+        <input type="text"/>
+        <label>to</label>
+        <select></select>
+      </div>
     </div>
   </body>
 </html>
