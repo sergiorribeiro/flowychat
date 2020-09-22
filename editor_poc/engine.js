@@ -61,6 +61,12 @@ var flowNgin = flowNgin || {
       this.label = label;
     },
 
+    Task: function(from, label) {
+      this.id = flowNgin.helpers.uuid();
+      this.from = from;
+      this.label = label;
+    },
+
     Step: function() {
       flowNgin.objects.Drawable.call(this);
       this.sequentialId = 0;
@@ -169,6 +175,36 @@ var flowNgin = flowNgin || {
       });
     }
 
+    const getExitById = function(step, id) {
+      return step.exits.find(function(exit) {
+        return exit.id === id;
+      });
+    }
+
+    const getTaskById = function(step, id) {
+      return step.tasks.find(function(task) {
+        return task.id === id;
+      });
+    }
+
+    const deleteStepById = function(id) {
+      _data.steps = _data.steps.filter(function(step) {
+        return step.id !== id;
+      });
+    }
+
+    const deleteConnectorById = function(step, id) {
+      step.exits = step.exits.filter(function(exit) {
+        return exit.id !== id;
+      });
+    }
+
+    const deleteTaskById = function(step, id) {
+      step.tasks = step.tasks.filter(function(task) {
+        return task.id !== id;
+      });
+    }
+
     self.start = function() {
       running = true;
       cycle();
@@ -188,31 +224,54 @@ var flowNgin = flowNgin || {
       return step.id;
     }
 
-    self.addConnector = function(parent, from, to, label) {
+    self.addExit = function(parent, data) {
       const step = getStepById(parent);
       if(step) {
-        const connector = new flowNgin.objects.Connection(getStepById(from), getStepById(to), label);
+        data = data || {from: null, to: null, label: null}
+        const connector = new flowNgin.objects.Connection(getStepById(data.from), getStepById(data.to), data.label);
         step.exits.push(connector);
-        return connector.id;
+        return { step: step.id, exit: connector.id };
       }
     }
 
-    self.removeConnector = function(id) {
-
+    self.removeExit = function(step, id) {
+      deleteConnectorById(getStepById(step), id);
     }
 
-    self.updateConnector = function(id, data) {
-      
+    self.removeStep = function(id) {
+      deleteStepById(id);
+    }
+
+    self.removeTask = function(step, id) {
+      deleteTaskById(getStepById(step), id);
+    }
+
+    self.updateExit = function(step, id, data) {
+      const exit = getExitById(getStepById(step), id);
+      if(exit) {
+        data = data || {from: null, to: null, label: null};
+        if(data.from) { exit.from = getStepById(data.from); }
+        if(data.to) { exit.to = getStepById(data.to); }
+        if(data.label) { exit.label = data.label; }
+      }
     }
 
     self.updateStep = function(id, data) {
-      
+      const step = getStepById(id);
+      if(step) {
+        data = data || {title: null, step: null};
+        if(data.title) { step.title = data.title; }
+        if(data.step) { step.step = data.step; }
+      }
     }
 
     self.addTask = function(parent, data) {
-      return {
-        step: "123",
-        task: "456"
+      const step = getStepById(parent);
+      if(step) {
+        data = data || {from: null, label: null}
+        const task = new flowNgin.objects.Task(getStepById(data.from), data.label);
+        step.tasks.push(task);
+        return { step: step.id, task: task.id };
       }
     }
 
@@ -222,6 +281,21 @@ var flowNgin = flowNgin || {
 
     self.selectedStep = function() {
       return STATE.selectedStep;
+    }
+
+    self.activeSteps = function(excludeSelected) {
+      return _data.steps.filter(function(step) {
+        if(STATE.selectedStep && excludeSelected && STATE.selectedStep.id === step.id){
+          return false;
+        }
+        return true;
+      }).map(function(step) {
+        return {
+          sequence: step.sequentialId,
+          uid: step.id,
+          title: step.title
+        }
+      })
     }
 
     const handleInteraction = function(event) {

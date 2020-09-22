@@ -15,9 +15,9 @@
     </div>
     <div id="selection">
       <label>title</label>
-      <input type="text" data-action="selection.update.title" />
+      <input data-role="title" type="text" data-action="selection.update.title" />
       <label>step</label>
-      <textarea data-action="selection.update.step"></textarea>
+      <textarea data-role="step" data-action="selection.update.step"></textarea>
       <label>exits <a data-action="selection.add.exit">(add)</a></label>
       <div id="exits"></div>
       <label>tasks <a data-action="selection.add.task">(add)</a></label>
@@ -25,20 +25,21 @@
       <button data-action="selection.delete">delete</button>
     </div>
     <div style="display: none">
-      <div data-structure="task">
+      <div data-nlevel="root" data-structure="task">
         <label>from</label>
-        <select></select>
+        <select data-role="from"></select>
         <label>task</label>
-        <input type="text"/>
-        <button>delete</button>
+        <input data-role="label" type="text"/>
+        <button data-role="delete">delete</button>
       </div>
-      <div data-structure="exit">
+      <div data-nlevel="root" data-structure="exit">
         <label>from</label>
-        <select></select>
-        <label>exit answer</label>
-        <input type="text"/>
+        <select data-role="from"></select>
+        <label>exit label</label>
+        <input data-role="label" type="text"/>
         <label>to</label>
-        <select></select>
+        <select data-role="to"></select>
+        <button data-role="delete">delete</button>
       </div>
     </div>
   </body>
