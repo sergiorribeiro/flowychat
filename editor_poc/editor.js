@@ -1,6 +1,8 @@
 (function(){
   window.refs = {
-    selection: document.querySelector("#selection")
+    selection: document.querySelector("#selection"),
+    selection_exits: document.querySelector("#selection [data-role='exits']"),
+    selection_tasks: document.querySelector("#selection [data-role='tasks']")
   };
 
   window.editor = {
@@ -18,7 +20,7 @@
         action.addEventListener("click", function() {
           const refs = window.fE.addTask(window.fE.selectedStep().id, null);
           let structure = window.editor.getStructure("task", {step: refs.step, task: refs.task});
-          document.querySelector("#tasks").appendChild(structure);
+          window.refs.selection_tasks.appendChild(structure);
         });
       });
 
@@ -26,7 +28,7 @@
         action.addEventListener("click", function() {
           const refs = window.fE.addExit(window.fE.selectedStep().id, null);
           let structure = window.editor.getStructure("exit", {step: refs.step, exit: refs.exit});
-          document.querySelector("#exits").appendChild(structure);
+          window.refs.selection_exits.appendChild(structure);
         });
       });
 
@@ -47,7 +49,7 @@
       });
     },
 
-    getStructure: function(structure, datas) {
+    getStructure: function(structure, datas, values) {
       const st = document.querySelector("[data-structure='" + structure + "']");
       if(st){
         const dup = st.cloneNode(true);
@@ -62,11 +64,12 @@
           case "task":
             {
               let fromSelect = dup.querySelector("select[data-role='from']");
+              let labelInput = dup.querySelector("input[data-role='label']");
               fromSelect.addEventListener("change", function() {
                 const nroot = window.editor.getNRoot(this).dataset;
                 window.fE.updateTask(nroot.step, nroot.task, {from: this.value});
               });
-              dup.querySelector("input[data-role='label']").addEventListener("keyup", function() {
+              labelInput.addEventListener("keyup", function() {
                 const nroot = window.editor.getNRoot(this).dataset;
                 window.fE.updateTask(nroot.step, nroot.task, {label: this.value});
               });
@@ -85,21 +88,31 @@
                 option.innerText = step.sequence + ") " + step.title;
                 fromSelect.appendChild(option);
               });
+
+              if(values) {
+                if(values.from) {
+                  fromSelect.value = values.from;
+                }
+                if(values.label) {
+                  labelInput.value = values.label;
+                }
+              }
             }
             break;
           case "exit":
             {
               let fromSelect = dup.querySelector("select[data-role='from']");
               let toSelect = dup.querySelector("select[data-role='to']");
-              dup.querySelector("select[data-role='from']").addEventListener("change", function() {
+              let labelInput = dup.querySelector("input[data-role='label']");
+              fromSelect.addEventListener("change", function() {
                 const nroot = window.editor.getNRoot(this).dataset;
                 window.fE.updateExit(nroot.step, nroot.exit, {from: this.value});
               });
-              dup.querySelector("select[data-role='to']").addEventListener("change", function() {
+              toSelect.addEventListener("change", function() {
                 const nroot = window.editor.getNRoot(this).dataset;
                 window.fE.updateExit(nroot.step, nroot.exit, {to: this.value});
               });
-              dup.querySelector("input[data-role='label']").addEventListener("keyup", function() {
+              labelInput.addEventListener("keyup", function() {
                 const nroot = window.editor.getNRoot(this).dataset;
                 window.fE.updateExit(nroot.step, nroot.exit, {label: this.value});
               });
@@ -120,6 +133,18 @@
                 fromSelect.appendChild(option);
                 toSelect.appendChild(option.cloneNode(true));
               });
+
+              if(values) {
+                if(values.from) {
+                  fromSelect.value = values.from;
+                }
+                if(values.to) {
+                  toSelect.value = values.to;
+                }
+                if(values.label) {
+                  labelInput.value = values.label;
+                }
+              }
             }
             break;
         }
@@ -140,7 +165,27 @@
     initSelected: function() {
       let step = window.fE.selectedStep();
       window.refs.selection.querySelector("input[data-role='title']").value = step.title;
-      window.refs.selection.querySelector("input[data-role='step']").value = step.step;
+      window.refs.selection.querySelector("textarea[data-role='step']").value = step.step;
+      window.refs.selection.querySelector("[data-role='ordinal']").innerText = step.sequentialId;
+      window.refs.selection.querySelector("[data-role='tasks']").innerHTML = "";
+      window.refs.selection.querySelector("[data-role='exits']").innerHTML = "";
+
+      step.exits.forEach(function(exit) {
+        let structure = window.editor.getStructure("exit", {step: step.id, exit: exit.id}, {
+          from: exit.from ? exit.from.id : null,
+          to: exit.to ? exit.to.id : null,
+          label: exit.label
+        });
+        window.refs.selection_exits.appendChild(structure);
+      });
+
+      step.tasks.forEach(function(task) {
+        let structure = window.editor.getStructure("task", {step: step.id, task: task.id}, {
+          from: task.from ? task.from.id : null,
+          label: task.label
+        });
+        window.refs.selection_tasks.appendChild(structure);
+      });
     }
   };
 

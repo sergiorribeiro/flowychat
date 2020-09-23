@@ -14,14 +14,15 @@
       <canvas></canvas>
     </div>
     <div id="selection">
+      <label>step <span data-role="ordinal"></span></label>
       <label>title</label>
       <input data-role="title" type="text" data-action="selection.update.title" />
       <label>step</label>
       <textarea data-role="step" data-action="selection.update.step"></textarea>
       <label>exits <a data-action="selection.add.exit">(add)</a></label>
-      <div id="exits"></div>
+      <div data-role="exits"></div>
       <label>tasks <a data-action="selection.add.task">(add)</a></label>
-      <div id="tasks"></div>
+      <div data-role="tasks"></div>
       <button data-action="selection.delete">delete</button>
     </div>
     <div style="display: none">

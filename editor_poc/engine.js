@@ -118,7 +118,17 @@ var flowNgin = flowNgin || {
   },
 
   Data: function() {
+    let sequence = 1;
     this.steps = [];
+    this.sequencer = {
+      use: function() {
+        sequence++;
+        return sequence-1;
+      },
+      peek: function() {
+        return sequence;
+      }
+    }
   },
 
   Engine: function(canvas, emitter, fps) {
@@ -133,8 +143,7 @@ var flowNgin = flowNgin || {
       holdStep: undefined,
       holdOffset: undefined,
       heldMovement: false,
-      consecutiveClicks: 0,
-      stepSequencer: 1
+      consecutiveClicks: 0
     };
     const _data = new flowNgin.Data();
     let running = false;
@@ -161,49 +170,49 @@ var flowNgin = flowNgin || {
         Math.round(point.x / SNAP) * SNAP,
         Math.round(point.y / SNAP) * SNAP
       );
-    }
+    };
 
     const getStepUnder = function(point) {
       return _data.steps.find(function(step) {
         return step.intersectPoint(point)
       });
-    }
+    };
 
     const getStepById = function(id) {
       return _data.steps.find(function(step) {
         return step.id === id;
       });
-    }
+    };
 
     const getExitById = function(step, id) {
       return step.exits.find(function(exit) {
         return exit.id === id;
       });
-    }
+    };
 
     const getTaskById = function(step, id) {
       return step.tasks.find(function(task) {
         return task.id === id;
       });
-    }
+    };
 
     const deleteStepById = function(id) {
       _data.steps = _data.steps.filter(function(step) {
         return step.id !== id;
       });
-    }
+    };
 
     const deleteConnectorById = function(step, id) {
       step.exits = step.exits.filter(function(exit) {
         return exit.id !== id;
       });
-    }
+    };
 
     const deleteTaskById = function(step, id) {
       step.tasks = step.tasks.filter(function(task) {
         return task.id !== id;
       });
-    }
+    };
 
     self.start = function() {
       running = true;
@@ -216,13 +225,11 @@ var flowNgin = flowNgin || {
 
     self.addStep = function(position) {
       const step = new flowNgin.objects.Step();
-      step.size = new flowNgin.objects.Size(0,0);
       step.position = position;
-      step.sequentialId = STATE.stepSequencer;
+      step.sequentialId = _data.sequencer.use();
       _data.steps.push(step);
-      STATE.stepSequencer += 1;
       return step.id;
-    }
+    };
 
     self.addExit = function(parent, data) {
       const step = getStepById(parent);
@@ -232,19 +239,21 @@ var flowNgin = flowNgin || {
         step.exits.push(connector);
         return { step: step.id, exit: connector.id };
       }
-    }
+    };
 
     self.removeExit = function(step, id) {
       deleteConnectorById(getStepById(step), id);
-    }
+    };
 
     self.removeStep = function(id) {
       deleteStepById(id);
-    }
+      STATE.selectedStep = null;
+      document.querySelector(emitter).dispatchEvent(stepSelectedEvent);
+    };
 
     self.removeTask = function(step, id) {
       deleteTaskById(getStepById(step), id);
-    }
+    };
 
     self.updateExit = function(step, id, data) {
       const exit = getExitById(getStepById(step), id);
@@ -254,7 +263,7 @@ var flowNgin = flowNgin || {
         if(data.to) { exit.to = getStepById(data.to); }
         if(data.label) { exit.label = data.label; }
       }
-    }
+    };
 
     self.updateStep = function(id, data) {
       const step = getStepById(id);
@@ -263,7 +272,7 @@ var flowNgin = flowNgin || {
         if(data.title) { step.title = data.title; }
         if(data.step) { step.step = data.step; }
       }
-    }
+    };
 
     self.addTask = function(parent, data) {
       const step = getStepById(parent);
@@ -273,15 +282,20 @@ var flowNgin = flowNgin || {
         step.tasks.push(task);
         return { step: step.id, task: task.id };
       }
-    }
+    };
 
-    self.updateTask = function(id, data) {
-
-    }
+    self.updateTask = function(step, id, data) {
+      const task = getTaskById(getStepById(step), id);
+      if(task) {
+        data = data || {from: null, label: null};
+        if(data.from) { task.from = getStepById(data.from); }
+        if(data.label) { task.label = data.label; }
+      }
+    };
 
     self.selectedStep = function() {
       return STATE.selectedStep;
-    }
+    };
 
     self.activeSteps = function(excludeSelected) {
       return _data.steps.filter(function(step) {
@@ -296,7 +310,67 @@ var flowNgin = flowNgin || {
           title: step.title
         }
       })
-    }
+    };
+
+    self.export = function() {
+      return JSON.stringify({
+        steps: _data.steps.map(function(step) {
+          return {
+            uid: step.id,
+            position: {
+              x: step.position.x,
+              y: step.position.y
+            },
+            title: step.title,
+            step: step.step,
+            tasks: step.tasks.map(function(task) {
+              return {
+                uid: task.id,
+                from: task.from ? task.from.id : null,
+                label: task.label
+              };
+            }),
+            exits: step.exits.map(function(exit) {
+              return {
+                uid: exit.id,
+                to: exit.to ? exit.to.id : null,
+                from: exit.from ? exit.from.id : null,
+                label: exit.label
+              };
+            })
+          }
+        })
+      });
+    };
+
+    self.import = function(raw) {
+      const data = JSON.parse(raw);
+      _data.steps = [];
+
+      data.steps.forEach(function(step) {
+        const newstep = new flowNgin.objects.Step();
+        newstep.position = new flowNgin.objects.Point(step.position.x, step.position.y);
+        newstep.sequentialId = _data.sequencer.use();
+        newstep.id = step.uid;
+        newstep.title = step.title;
+        newstep.step = step.step;
+        _data.steps.push(newstep);
+      });
+
+      data.steps.forEach(function(step){
+        const newstep = getStepById(step.uid);
+
+        step.tasks.forEach(function(task){
+          const newtask = new flowNgin.objects.Task(getStepById(task.from), task.label);
+          newstep.tasks.push(newtask);
+        });
+
+        step.exits.forEach(function(exit){
+          const newexit = new flowNgin.objects.Connection(getStepById(exit.from), getStepById(exit.to), exit.label);
+          newstep.exits.push(newexit);
+        });
+      });
+    };
 
     const handleInteraction = function(event) {
       const cursorPosition = new flowNgin.objects.Point(event.x, event.y);
@@ -346,7 +420,7 @@ var flowNgin = flowNgin || {
           }
         break;
       }
-    }
+    };
 
     const cycle = function() {
       _ctx.fillStyle = "#fff";
