@@ -1,10 +1,28 @@
 var flowNgin = flowNgin || {
+  config: {
+    SNAP: 5
+  },
+
   helpers: {
     uuid: function() {
       return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
         var r = Math.random() * 16 | 0, v = c == "x" ? r : (r & 0x3 | 0x8);
         return v.toString(16);
       });
+    },
+
+    snapPosition: function(point) {
+      return new flowNgin.objects.Point(
+        Math.round(point.x / flowNgin.config.SNAP) * flowNgin.config.SNAP,
+        Math.round(point.y / flowNgin.config.SNAP) * flowNgin.config.SNAP
+      );
+    },
+
+    snapSize: function(size) {
+      return new flowNgin.objects.Size(
+        Math.round(size.width / flowNgin.config.SNAP) * flowNgin.config.SNAP,
+        Math.round(size.height / flowNgin.config.SNAP) * flowNgin.config.SNAP
+      );
     }
   },
 
@@ -73,6 +91,7 @@ var flowNgin = flowNgin || {
       this.exits = [];
       this.tasks = [];
       this.title = "untitled";
+      let self = this;
 
       this.draw = function(ctx) {
         const padding = 10;
@@ -83,19 +102,34 @@ var flowNgin = flowNgin || {
         this.size.height = 0;
 
         const titleFontSize = 15;
-        ctx.font = `${titleFontSize}px Arial`;
+        const exitFontSize = 13;
+        const titleFont = `${titleFontSize}px Arial`;
+        const exitFont = `${exitFontSize}px Arial`;
         this.size.width += padding;
         let maxWidth = 0;
+        ctx.font = titleFont;
         maxWidth = ctx.measureText(this.title).width;
-        // check exits's width
-          // here, on a loop
+        
+        ctx.font = exitFont;
+        this.exits.forEach(function(exit){
+          maxWidth = Math.max(maxWidth, ctx.measureText(exit.label).width);
+        });
+
         this.size.width += maxWidth;
         this.size.width += padding;
 
         this.size.height += padding;
         this.size.height += titleFontSize;
+
+        this.exits.forEach(function(exit){
+          self.size.height += padding;
+          self.size.height += exitFontSize;
+          self.size.height += padding;
+        });
+
         this.size.height += padding;
 
+        this.size = flowNgin.helpers.snapSize(this.size);
         const w = this.size.width;
         const h = this.size.height;
 
@@ -109,8 +143,15 @@ var flowNgin = flowNgin || {
         ctx.strokeStyle = "#000";
         ctx.stroke();
 
+        ctx.font = titleFont;
         ctx.fillStyle = "#000";
         ctx.fillText(this.title, x + 10, y + 10 + titleFontSize);
+
+        this.exits.forEach(function(exit){
+          ctx.font = exitFont;
+          ctx.fillStyle = "#000";
+          ctx.fillText(exit.label, 0, 0 + exitFontSize);
+        });
 
         ctx.restore();
       }
@@ -134,7 +175,7 @@ var flowNgin = flowNgin || {
   Engine: function(canvas, emitter, fps) {
     const self = this;
     const FPS = fps;
-    const SNAP = 5;
+    const SNAP = flowNgin.config.SNAP;
     const CLICKTMR = null;
     const STATE = {
       holdPoint: null,
@@ -163,13 +204,6 @@ var flowNgin = flowNgin || {
       ["mouseup", "mousedown", "mousemove"].forEach(function(eventName){
         _ctx.canvas.addEventListener(eventName, handleInteraction);
       })
-    };
-
-    const snapPosition = function(point) {
-      return new flowNgin.objects.Point(
-        Math.round(point.x / SNAP) * SNAP,
-        Math.round(point.y / SNAP) * SNAP
-      );
     };
 
     const getStepUnder = function(point) {
@@ -413,7 +447,7 @@ var flowNgin = flowNgin || {
             STATE.heldMovement = true;
             STATE.holdOffset = STATE.holdPoint.vectorTo(cursorPosition);
             if(STATE.holdStep) {
-              STATE.holdStep.position = snapPosition(STATE.holdStep.referencePosition.add(STATE.holdOffset));
+              STATE.holdStep.position = flowNgin.helpers.snapPosition(STATE.holdStep.referencePosition.add(STATE.holdOffset));
             }else {
               // update position of ALL OBJECTS
             }
@@ -432,10 +466,56 @@ var flowNgin = flowNgin || {
       }
     };
 
+    const drawDesignSupport = function(layer) {
+      switch(layer) {
+        case "low":
+          _ctx.save();
+          const gridSize = SNAP * 4;
+          for(let x=gridSize; x <= _ctx.canvas.width; x+=gridSize){
+            for(let y=gridSize; y <= _ctx.canvas.height; y+=gridSize){
+              if((x % (gridSize * 5) === 0) || y % (gridSize * 5) === 0) {
+                _ctx.globalAlpha = 0.01;
+              }else{
+                _ctx.globalAlpha = 0.005;
+              }
+              _ctx.beginPath();
+              _ctx.moveTo(0, y);
+              _ctx.lineTo(_ctx.canvas.width, y);
+              _ctx.moveTo(x, 0);
+              _ctx.lineTo(x, _ctx.canvas.height);
+              _ctx.stroke();
+            }
+          }
+          _ctx.restore();
+          break;
+        case "high":
+          if(STATE.holdStep) {
+            _ctx.save();
+            const ssp = STATE.holdStep.position;
+            const sss = STATE.holdStep.size;
+            _ctx.globalAlpha = 0.3;
+            _ctx.beginPath();
+            _ctx.moveTo(0,ssp.y);
+            _ctx.lineTo(_ctx.canvas.width, ssp.y);
+            _ctx.moveTo(0,ssp.y + sss.height);
+            _ctx.lineTo(_ctx.canvas.width, ssp.y + sss.height);
+            _ctx.moveTo(ssp.x,0);
+            _ctx.lineTo(ssp.x, _ctx.canvas.height);
+            _ctx.moveTo(ssp.x + sss.width, 0);
+            _ctx.lineTo(ssp.x + sss.width, _ctx.canvas.height);
+            _ctx.stroke();
+            _ctx.restore();
+          }
+          break;
+      }
+    }
+
     const draw = function() {
+      drawDesignSupport("low");
       _data.steps.forEach(function(step) {
         step.draw(_ctx);
       });
+      drawDesignSupport("high");
     };
 
     const update = function() {
