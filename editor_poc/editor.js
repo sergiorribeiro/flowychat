@@ -126,6 +126,9 @@
               let allOption = document.createElement("option");
               allOption.innerText = "*) Anywhere";
               fromSelect.appendChild(allOption);
+              let noneOption = document.createElement("option");
+              noneOption.innerText = "x) Nowhere";
+              toSelect.appendChild(noneOption);
               window.fE.activeSteps(true).forEach(function(step) {
                 let option = document.createElement("option");
                 option.value = step.uid;

@@ -1,5 +1,23 @@
 var flowNgin = flowNgin || {
-  config: {
+  _data: new function(){
+    let sequence = 1;
+    this.steps = [];
+    this.sequencer = {
+      use: function() {
+        sequence++;
+        return sequence-1;
+      },
+      peek: function() {
+        return sequence;
+      }
+    }
+  },
+
+  _global: {
+    offset: null
+  },
+
+  _config: {
     SNAP: 5
   },
 
@@ -13,16 +31,58 @@ var flowNgin = flowNgin || {
 
     snapPosition: function(point) {
       return new flowNgin.objects.Point(
-        Math.round(point.x / flowNgin.config.SNAP) * flowNgin.config.SNAP,
-        Math.round(point.y / flowNgin.config.SNAP) * flowNgin.config.SNAP
+        Math.round(point.x / flowNgin._config.SNAP) * flowNgin._config.SNAP,
+        Math.round(point.y / flowNgin._config.SNAP) * flowNgin._config.SNAP
       );
     },
 
     snapSize: function(size) {
       return new flowNgin.objects.Size(
-        Math.round(size.width / flowNgin.config.SNAP) * flowNgin.config.SNAP,
-        Math.round(size.height / flowNgin.config.SNAP) * flowNgin.config.SNAP
+        Math.round(size.width / flowNgin._config.SNAP) * flowNgin._config.SNAP,
+        Math.round(size.height / flowNgin._config.SNAP) * flowNgin._config.SNAP
       );
+    },
+
+    getStepUnder: function(point) {
+      return flowNgin._data.steps.find(function(step) {
+        return step.intersectPoint(point)
+      });
+    },
+
+    getStepById: function(id) {
+      return flowNgin._data.steps.find(function(step) {
+        return step.id === id;
+      });
+    },
+
+    getExitById: function(step, id) {
+      return step.exits.find(function(exit) {
+        return exit.id === id;
+      });
+    },
+
+    getTaskById: function(step, id) {
+      return step.tasks.find(function(task) {
+        return task.id === id;
+      });
+    },
+
+    deleteStepById: function(id) {
+      flowNgin._data.steps = flowNgin._data.steps.filter(function(step) {
+        return step.id !== id;
+      });
+    },
+
+    deleteConnectorById: function(step, id) {
+      step.exits = step.exits.filter(function(exit) {
+        return exit.id !== id;
+      });
+    },
+
+    deleteTaskById: function(step, id) {
+      step.tasks = step.tasks.filter(function(task) {
+        return task.id !== id;
+      });
     }
   },
 
@@ -41,6 +101,14 @@ var flowNgin = flowNgin || {
 
       this.add = function(point) {
         return new flowNgin.objects.Point(this.x + point.x, this.y + point.y);
+      }
+
+      this.subtract = function(point) {
+        return new flowNgin.objects.Point(this.x - point.x, this.y - point.y);
+      }
+
+      this.clone = function() {
+        return new flowNgin.objects.Point(this.x, this.y);
       }
     },
 
@@ -76,13 +144,13 @@ var flowNgin = flowNgin || {
       this.id = flowNgin.helpers.uuid();
       this.from = from;
       this.to = to;
-      this.label = label;
+      this.label = label || "-";
     },
 
     Task: function(from, label) {
       this.id = flowNgin.helpers.uuid();
       this.from = from;
-      this.label = label;
+      this.label = label || "";
     },
 
     Step: function() {
@@ -91,83 +159,149 @@ var flowNgin = flowNgin || {
       this.exits = [];
       this.tasks = [];
       this.title = "untitled";
+      this.step = "";
       let self = this;
 
-      this.draw = function(ctx) {
+      this.update = function(ctx,layer) {
         const padding = 10;
-        const x = this.position.x;
-        const y = this.position.y;
-
-        this.size.width = 0;
-        this.size.height = 0;
-
+        const halfPadding = padding * 0.5;
         const titleFontSize = 15;
         const exitFontSize = 13;
         const titleFont = `${titleFontSize}px Arial`;
         const exitFont = `${exitFontSize}px Arial`;
-        this.size.width += padding;
-        let maxWidth = 0;
-        ctx.font = titleFont;
-        maxWidth = ctx.measureText(this.title).width;
-        
-        ctx.font = exitFont;
-        this.exits.forEach(function(exit){
-          maxWidth = Math.max(maxWidth, ctx.measureText(exit.label).width);
-        });
 
-        this.size.width += maxWidth;
-        this.size.width += padding;
+        if(layer === 1) {
+          this.size.width = 0;
+          this.size.height = 0;
+          this.size.width += padding;
+          let maxWidth = 0;
+          ctx.font = titleFont;
+          maxWidth = ctx.measureText(this.title).width;
+          
+          ctx.font = exitFont;
+          this.exits.forEach(function(exit){
+            maxWidth = Math.max(maxWidth, ctx.measureText(exit.label).width);
+          });
 
-        this.size.height += padding;
-        this.size.height += titleFontSize;
+          this.size.width += maxWidth;
+          this.size.width += padding;
 
-        this.exits.forEach(function(exit){
-          self.size.height += padding;
-          self.size.height += exitFontSize;
-          self.size.height += padding;
-        });
+          this.size.height += padding;
+          this.size.height += titleFontSize;
+          
+          if(this.exits.length > 0) {
+            this.size.height += padding;
+            this.exits.forEach(function(exit) {
+              self.size.height += halfPadding;
+              self.size.height += exitFontSize;
+            });
+          }
 
-        this.size.height += padding;
+          this.size.height += padding;
 
-        this.size = flowNgin.helpers.snapSize(this.size);
+          this.size = flowNgin.helpers.snapSize(this.size);
+
+          this.center = new flowNgin.objects.Point(
+            this.position.x + this.size.width / 2, 
+            this.position.y + this.size.height / 2
+          );
+        }
+
+        if(layer === 2) {
+          let exitPosition = 
+            (this.position.y + flowNgin._global.offset.y) +
+            padding +
+            titleFontSize +
+            padding +
+            exitFontSize;
+
+          this.exits.forEach(function(exit){
+            exit._temp = exit._temp || {};
+            exit._temp.yPos = exitPosition;
+            exitPosition += halfPadding + exitFontSize;
+            if(exit.to) {
+              exit._temp.targetPoint = exit.to.center.add(flowNgin._global.offset);
+            }
+          });
+        }
+      };
+
+      this.draw = function(ctx,layer) {
+        const offsetPosition = this.position.add(flowNgin._global.offset);
+        const x = offsetPosition.x;
+        const y = offsetPosition.y;
         const w = this.size.width;
         const h = this.size.height;
+        const padding = 10;
+        const seqPadding = padding * 0.2;
+        const titleFontSize = 15;
+        const exitFontSize = 13;
+        const sequenceFontSize = 10;
+        const titleFont = `${titleFontSize}px Arial`;
+        const exitFont = `${exitFontSize}px Arial`;
+        const sequenceFont = `${sequenceFontSize}px Arial`;
 
         ctx.save();
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(x, y, w, h);
 
-        ctx.beginPath();
-        ctx.rect(x, y, w, h);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#000";
-        ctx.stroke();
+        if(layer == 1) {
+          if(this.exits.length > 0) {
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 2;
+            this.exits.forEach(function(exit){
+              if(exit.to) {
+                const exitXStart = (exit._temp.targetPoint.x < self.center.x) ? x : x + self.size.width;
+                ctx.beginPath();
+                ctx.moveTo(exitXStart, exit._temp.yPos - exitFontSize / 2);
+                ctx.lineTo(exit._temp.targetPoint.x, exit._temp.targetPoint.y);
+                ctx.stroke();
+              }
+            });
+          }
+        }
 
-        ctx.font = titleFont;
-        ctx.fillStyle = "#000";
-        ctx.fillText(this.title, x + 10, y + 10 + titleFontSize);
+        if(layer === 2) {
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(x, y, w, h);
 
-        this.exits.forEach(function(exit){
-          ctx.font = exitFont;
+          ctx.beginPath();
+          ctx.rect(x, y, w, h);
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = "#000";
+          ctx.stroke();
+
+          const seqW = ctx.measureText(this.sequentialId).width + seqPadding * 2
+          const seqBH = sequenceFontSize + seqPadding * 3;
+          const outdent = sequenceFontSize * 0.5;
+          ctx.fillStyle = "#fff";
+          ctx.fillRect(x - outdent, y - outdent, seqW, seqBH);
+
+          ctx.beginPath();
+          ctx.rect(x - outdent, y - outdent, seqW, seqBH);
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = "#000";
+          ctx.stroke();
+
+          ctx.font = sequenceFont;
           ctx.fillStyle = "#000";
-          ctx.fillText(exit.label, 0, 0 + exitFontSize);
-        });
+          ctx.fillText(
+            this.sequentialId, 
+            (x - outdent) + seqPadding, 
+            (y - outdent) + seqPadding + sequenceFontSize);
+
+          ctx.font = titleFont;
+          ctx.fillStyle = "#000";
+          ctx.fillText(this.title, x + padding, y + padding + titleFontSize);
+
+          if(this.exits.length > 0) {
+            ctx.font = exitFont;
+            ctx.fillStyle = "#000";
+            this.exits.forEach(function(exit){
+              ctx.fillText(exit.label, x + padding, exit._temp.yPos);
+            });
+          }
+        }
 
         ctx.restore();
-      }
-    }
-  },
-
-  Data: function() {
-    let sequence = 1;
-    this.steps = [];
-    this.sequencer = {
-      use: function() {
-        sequence++;
-        return sequence-1;
-      },
-      peek: function() {
-        return sequence;
       }
     }
   },
@@ -175,7 +309,7 @@ var flowNgin = flowNgin || {
   Engine: function(canvas, emitter, fps) {
     const self = this;
     const FPS = fps;
-    const SNAP = flowNgin.config.SNAP;
+    const SNAP = flowNgin._config.SNAP;
     const CLICKTMR = null;
     const STATE = {
       holdPoint: null,
@@ -184,9 +318,10 @@ var flowNgin = flowNgin || {
       holdStep: undefined,
       holdOffset: undefined,
       heldMovement: false,
-      consecutiveClicks: 0
+      consecutiveClicks: 0,
+      offset: new flowNgin.objects.Point(0,0),
+      offsetReference: new flowNgin.objects.Point(0,0)
     };
-    const _data = new flowNgin.Data();
     let running = false;
     const _ctx = canvas.getContext("2d", {alpha: false});
     _ctx.imageSmoothingEnabled = false;
@@ -206,48 +341,6 @@ var flowNgin = flowNgin || {
       })
     };
 
-    const getStepUnder = function(point) {
-      return _data.steps.find(function(step) {
-        return step.intersectPoint(point)
-      });
-    };
-
-    const getStepById = function(id) {
-      return _data.steps.find(function(step) {
-        return step.id === id;
-      });
-    };
-
-    const getExitById = function(step, id) {
-      return step.exits.find(function(exit) {
-        return exit.id === id;
-      });
-    };
-
-    const getTaskById = function(step, id) {
-      return step.tasks.find(function(task) {
-        return task.id === id;
-      });
-    };
-
-    const deleteStepById = function(id) {
-      _data.steps = _data.steps.filter(function(step) {
-        return step.id !== id;
-      });
-    };
-
-    const deleteConnectorById = function(step, id) {
-      step.exits = step.exits.filter(function(exit) {
-        return exit.id !== id;
-      });
-    };
-
-    const deleteTaskById = function(step, id) {
-      step.tasks = step.tasks.filter(function(task) {
-        return task.id !== id;
-      });
-    };
-
     self.start = function() {
       running = true;
       cycle();
@@ -259,48 +352,48 @@ var flowNgin = flowNgin || {
 
     self.addStep = function(position) {
       const step = new flowNgin.objects.Step();
-      step.position = position;
-      step.sequentialId = _data.sequencer.use();
-      _data.steps.push(step);
+      step.position = flowNgin.helpers.snapPosition(position.subtract(flowNgin._global.offset));
+      step.sequentialId = flowNgin._data.sequencer.use();
+      flowNgin._data.steps.push(step);
       return step.id;
     };
 
     self.addExit = function(parent, data) {
-      const step = getStepById(parent);
+      const step = flowNgin.helpers.getStepById(parent);
       if(step) {
         data = data || {from: null, to: null, label: null}
-        const connector = new flowNgin.objects.Connection(getStepById(data.from), getStepById(data.to), data.label);
+        const connector = new flowNgin.objects.Connection(flowNgin.helpers.getStepById(data.from), flowNgin.helpers.getStepById(data.to), data.label);
         step.exits.push(connector);
         return { step: step.id, exit: connector.id };
       }
     };
 
     self.removeExit = function(step, id) {
-      deleteConnectorById(getStepById(step), id);
+      flowNgin.helpers.deleteConnectorById(flowNgin.helpers.getStepById(step), id);
     };
 
     self.removeStep = function(id) {
-      deleteStepById(id);
+      flowNgin.helpers.deleteStepById(id);
       STATE.selectedStep = null;
       document.querySelector(emitter).dispatchEvent(stepSelectedEvent);
     };
 
     self.removeTask = function(step, id) {
-      deleteTaskById(getStepById(step), id);
+      flowNgin.helpers.deleteTaskById(flowNgin.helpers.getStepById(step), id);
     };
 
     self.updateExit = function(step, id, data) {
-      const exit = getExitById(getStepById(step), id);
+      const exit = flowNgin.helpers.getExitById(flowNgin.helpers.getStepById(step), id);
       if(exit) {
         data = data || {from: null, to: null, label: null};
-        if(data.from) { exit.from = getStepById(data.from); }
-        if(data.to) { exit.to = getStepById(data.to); }
+        if(data.from) { exit.from = flowNgin.helpers.getStepById(data.from); }
+        if(data.to) { exit.to = flowNgin.helpers.getStepById(data.to); }
         if(data.label) { exit.label = data.label; }
       }
     };
 
     self.updateStep = function(id, data) {
-      const step = getStepById(id);
+      const step = flowNgin.helpers.getStepById(id);
       if(step) {
         data = data || {title: null, step: null};
         if(data.title) { step.title = data.title; }
@@ -309,20 +402,20 @@ var flowNgin = flowNgin || {
     };
 
     self.addTask = function(parent, data) {
-      const step = getStepById(parent);
+      const step = flowNgin.helpers.getStepById(parent);
       if(step) {
         data = data || {from: null, label: null}
-        const task = new flowNgin.objects.Task(getStepById(data.from), data.label);
+        const task = new flowNgin.objects.Task(flowNgin.helpers.getStepById(data.from), data.label);
         step.tasks.push(task);
         return { step: step.id, task: task.id };
       }
     };
 
     self.updateTask = function(step, id, data) {
-      const task = getTaskById(getStepById(step), id);
+      const task = flowNgin.helpers.getTaskById(flowNgin.helpers.getStepById(step), id);
       if(task) {
         data = data || {from: null, label: null};
-        if(data.from) { task.from = getStepById(data.from); }
+        if(data.from) { task.from = flowNgin.helpers.getStepById(data.from); }
         if(data.label) { task.label = data.label; }
       }
     };
@@ -332,7 +425,7 @@ var flowNgin = flowNgin || {
     };
 
     self.activeSteps = function(excludeSelected) {
-      return _data.steps.filter(function(step) {
+      return flowNgin._data.steps.filter(function(step) {
         if(STATE.selectedStep && excludeSelected && STATE.selectedStep.id === step.id){
           return false;
         }
@@ -348,7 +441,7 @@ var flowNgin = flowNgin || {
 
     self.export = function() {
       return JSON.stringify({
-        steps: _data.steps.map(function(step) {
+        steps: flowNgin._data.steps.map(function(step) {
           return {
             uid: step.id,
             position: {
@@ -379,28 +472,28 @@ var flowNgin = flowNgin || {
 
     self.import = function(raw) {
       const data = JSON.parse(raw);
-      _data.steps = [];
+      flowNgin._data.steps = [];
 
       data.steps.forEach(function(step) {
         const newstep = new flowNgin.objects.Step();
         newstep.position = new flowNgin.objects.Point(step.position.x, step.position.y);
-        newstep.sequentialId = _data.sequencer.use();
+        newstep.sequentialId = flowNgin._data.sequencer.use();
         newstep.id = step.uid;
         newstep.title = step.title;
         newstep.step = step.step;
-        _data.steps.push(newstep);
+        flowNgin._data.steps.push(newstep);
       });
 
       data.steps.forEach(function(step){
-        const newstep = getStepById(step.uid);
+        const newstep = flowNgin.helpers.getStepById(step.uid);
 
         step.tasks.forEach(function(task){
-          const newtask = new flowNgin.objects.Task(getStepById(task.from), task.label);
+          const newtask = new flowNgin.objects.Task(flowNgin.helpers.getStepById(task.from), task.label);
           newstep.tasks.push(newtask);
         });
 
         step.exits.forEach(function(exit){
-          const newexit = new flowNgin.objects.Connection(getStepById(exit.from), getStepById(exit.to), exit.label);
+          const newexit = new flowNgin.objects.Connection(flowNgin.helpers.getStepById(exit.from), flowNgin.helpers.getStepById(exit.to), exit.label);
           newstep.exits.push(newexit);
         });
       });
@@ -408,17 +501,18 @@ var flowNgin = flowNgin || {
 
     const handleInteraction = function(event) {
       const cursorPosition = new flowNgin.objects.Point(event.x, event.y);
+      const calculatedCursorPosition = cursorPosition.subtract(flowNgin._global.offset);
       
       switch(event.type) {
         case "mousedown":
           STATE.mouseDown = true;
           STATE.holdPoint = cursorPosition;
-          STATE.holdStep = getStepUnder(cursorPosition);
+          STATE.holdStep = flowNgin.helpers.getStepUnder(calculatedCursorPosition);
           STATE.heldMovement = false;
           if(STATE.holdStep) {
-            STATE.holdStep.referencePosition = STATE.holdStep.position;
-          }else {
-            // referencePosition on ALL OBJECTS
+            STATE.holdStep.referencePosition = STATE.holdStep.position.clone();
+          } else {
+            STATE.offsetReference = flowNgin._global.offset.clone();
           }
         break;
         case "mouseup":
@@ -432,13 +526,13 @@ var flowNgin = flowNgin || {
           STATE.holdStep = undefined;
           STATE.holdOffset = undefined;
           if(!STATE.heldMovement) {
-            STATE.selectedStep = getStepUnder(cursorPosition);
+            STATE.selectedStep = flowNgin.helpers.getStepUnder(calculatedCursorPosition);
             document.querySelector(emitter).dispatchEvent(stepSelectedEvent);
           }
           if(STATE.consecutiveClicks >= 2) {
             STATE.consecutiveClicks = 0;
             if(!STATE.selectedStep) {
-              self.addStep(cursorPosition);
+              self.addStep(calculatedCursorPosition);
             }
           }
         break;
@@ -449,7 +543,7 @@ var flowNgin = flowNgin || {
             if(STATE.holdStep) {
               STATE.holdStep.position = flowNgin.helpers.snapPosition(STATE.holdStep.referencePosition.add(STATE.holdOffset));
             }else {
-              // update position of ALL OBJECTS
+              flowNgin._global.offset = flowNgin.helpers.snapPosition(STATE.offsetReference.add(STATE.holdOffset));
             }
           }
         break;
@@ -459,8 +553,8 @@ var flowNgin = flowNgin || {
     const cycle = function() {
       _ctx.fillStyle = "#fff";
       _ctx.fillRect(0,0,_ctx.canvas.width,_ctx.canvas.height);
-      draw();
       update();
+      draw();
       if(running) {
         setTimeout(requestAnimationFrame.bind(this,cycle), 1000 / FPS)
       }
@@ -470,6 +564,7 @@ var flowNgin = flowNgin || {
       switch(layer) {
         case "low":
           _ctx.save();
+          _ctx.lineWidth = 1;
           const gridSize = SNAP * 4;
           for(let x=gridSize; x <= _ctx.canvas.width; x+=gridSize){
             for(let y=gridSize; y <= _ctx.canvas.height; y+=gridSize){
@@ -487,11 +582,11 @@ var flowNgin = flowNgin || {
             }
           }
           _ctx.restore();
-          break;
-        case "high":
+
           if(STATE.holdStep) {
             _ctx.save();
-            const ssp = STATE.holdStep.position;
+            _ctx.lineWidth = 2;
+            const ssp = STATE.holdStep.position.add(flowNgin._global.offset);
             const sss = STATE.holdStep.size;
             _ctx.globalAlpha = 0.3;
             _ctx.beginPath();
@@ -507,19 +602,29 @@ var flowNgin = flowNgin || {
             _ctx.restore();
           }
           break;
+        case "high":
+          break;
       }
     }
 
     const draw = function() {
       drawDesignSupport("low");
-      _data.steps.forEach(function(step) {
-        step.draw(_ctx);
+      flowNgin._data.steps.forEach(function(step) {
+        step.draw(_ctx,1);
+      });
+      flowNgin._data.steps.forEach(function(step) {
+        step.draw(_ctx,2);
       });
       drawDesignSupport("high");
     };
 
     const update = function() {
-      
+      flowNgin._data.steps.forEach(function(step){
+        step.update(_ctx,1);
+      });
+      flowNgin._data.steps.forEach(function(step){
+        step.update(_ctx,2);
+      });
     };
 
     updateViewport();
@@ -527,3 +632,4 @@ var flowNgin = flowNgin || {
     self.start();
   }
 };
+flowNgin._global.offset = new flowNgin.objects.Point(0,0);
