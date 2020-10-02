@@ -121,6 +121,15 @@
                 window.fE.removeExit(nroot.dataset.step, nroot.dataset.exit);
                 nroot.remove();
               });
+              dup.addEventListener("mouseenter", function(){
+                window.fE.signal("highlight_exit", {
+                  step: this.dataset.step,
+                  exit: this.dataset.exit
+                });
+              });
+              dup.addEventListener("mouseleave", function(){
+                window.fE.unsignal("highlight_exit");
+              });
               fromSelect.innerHTML = "";
               toSelect.innerHTML = "";
               let allOption = document.createElement("option");

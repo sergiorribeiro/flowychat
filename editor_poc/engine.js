@@ -14,11 +14,16 @@ var flowNgin = flowNgin || {
   },
 
   _global: {
-    offset: null
+    offset: null,
+    selectedStep: null,
+    signals: {}
   },
 
   _config: {
-    SNAP: 5
+    SNAP: 5,
+    EXIT_INBOUND_COLOR: "#EA6D09",
+    EXIT_OUTBOUND_COLOR: "#0BD49B",
+    EXIT_HIGHLIGHT_COLOR: "#FFF63A",
   },
 
   helpers: {
@@ -107,6 +112,17 @@ var flowNgin = flowNgin || {
         return new flowNgin.objects.Point(this.x - point.x, this.y - point.y);
       }
 
+      this.angleTo = function(point) {
+        return Math.atan2(this.y - point.y, this.x - point.x);
+      }
+
+      this.midPointTo = function(point) {
+        return new flowNgin.objects.Point(
+          (this.x + point.x) / 2,
+          (this.y + point.y) / 2,
+        );
+      }
+
       this.clone = function() {
         return new flowNgin.objects.Point(this.x, this.y);
       }
@@ -161,6 +177,12 @@ var flowNgin = flowNgin || {
       this.title = "untitled";
       this.step = "";
       let self = this;
+
+      this.is = function(step) {
+        if(!step) {return false;}
+
+        return this.id === step.id;
+      }
 
       this.update = function(ctx,layer) {
         const padding = 10;
@@ -245,31 +267,86 @@ var flowNgin = flowNgin || {
 
         if(layer == 1) {
           if(this.exits.length > 0) {
-            ctx.strokeStyle = "#000";
-            ctx.lineWidth = 2;
             this.exits.forEach(function(exit){
               if(exit.to) {
                 const exitXStart = (exit._temp.targetPoint.x < self.center.x) ? x : x + self.size.width;
+                const startPt = new flowNgin.objects.Point(exitXStart, exit._temp.yPos - exitFontSize / 2);
+                const endPt = new flowNgin.objects.Point(exit._temp.targetPoint.x, exit._temp.targetPoint.y);
+
+                const hleSig = flowNgin._global.signals["highlight_exit"];
+
+                if(hleSig){
+                  const tmpStep = flowNgin.helpers.getStepById(hleSig.step);
+                  const tmpExit = flowNgin.helpers.getExitById(tmpStep, hleSig.exit);
+
+                  if(
+                      (!tmpExit.from && exit.to.is(tmpStep)) || 
+                      (tmpExit.from && exit.to.is(tmpStep) && tmpExit.from.is(self)) || 
+                      tmpExit.id === exit.id
+                    ) {
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = flowNgin._config.EXIT_HIGHLIGHT_COLOR;
+                    ctx.beginPath();
+                    ctx.moveTo(startPt.x, startPt.y);
+                    ctx.lineTo(endPt.x, endPt.y);
+                    ctx.stroke();
+                  } 
+                }
+
+                ctx.lineWidth = 1;
+                if(exit.to.is(flowNgin._global.selectedStep)){
+                  ctx.strokeStyle = flowNgin._config.EXIT_OUTBOUND_COLOR;
+                  ctx.fillStyle = flowNgin._config.EXIT_OUTBOUND_COLOR;
+                }else if(self.is(flowNgin._global.selectedStep)){
+                  ctx.strokeStyle = flowNgin._config.EXIT_INBOUND_COLOR;
+                  ctx.fillStyle = flowNgin._config.EXIT_INBOUND_COLOR;
+                }else{
+                  ctx.strokeStyle = "#000";
+                  ctx.fillStyle = "#000";
+                }
                 ctx.beginPath();
-                ctx.moveTo(exitXStart, exit._temp.yPos - exitFontSize / 2);
-                ctx.lineTo(exit._temp.targetPoint.x, exit._temp.targetPoint.y);
+                ctx.moveTo(startPt.x, startPt.y);
+                ctx.lineTo(endPt.x, endPt.y);
                 ctx.stroke();
+
+                const midPoint = startPt.midPointTo(endPt);
+                const angle = startPt.angleTo(endPt);
+
+                const arrowSize = 5;
+                ctx.save();
+                ctx.translate(midPoint.x, midPoint.y);
+                ctx.rotate(angle - Math.PI / 2);
+                ctx.beginPath();
+                ctx.moveTo(-arrowSize, arrowSize);
+                ctx.lineTo(0, -arrowSize);
+                ctx.lineTo(arrowSize, arrowSize);
+                ctx.fill();
+                ctx.restore();
               }
             });
           }
         }
 
         if(layer === 2) {
-          ctx.fillStyle = "#fff";
+          if(this.is(flowNgin._global.selectedStep)){
+            ctx.fillStyle = "#eee";
+          }else{
+            ctx.fillStyle = "#fff";
+          }
           ctx.fillRect(x, y, w, h);
 
           ctx.beginPath();
           ctx.rect(x, y, w, h);
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = "#000";
+          if(this.is(flowNgin._global.selectedStep)){
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "#000";
+          }else{
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "#000";
+          }
           ctx.stroke();
 
-          const seqW = ctx.measureText(this.sequentialId).width + seqPadding * 2
+          let seqW = ctx.measureText(this.sequentialId).width + seqPadding * 2
           const seqBH = sequenceFontSize + seqPadding * 3;
           const outdent = sequenceFontSize * 0.5;
           ctx.fillStyle = "#fff";
@@ -285,8 +362,26 @@ var flowNgin = flowNgin || {
           ctx.fillStyle = "#000";
           ctx.fillText(
             this.sequentialId, 
-            (x - outdent) + seqPadding, 
+            (x - outdent) + (seqPadding * 1.5), 
             (y - outdent) + seqPadding + sequenceFontSize);
+          
+          if(self.tasks.length > 0) {
+            seqW = ctx.measureText(this.tasks.length).width + seqPadding * 2
+            ctx.fillStyle = "#fff";
+            ctx.fillRect((x + w) - outdent * 1.5, (y + h) - outdent * 1.5, seqW, seqBH);
+
+            ctx.beginPath();
+            ctx.rect((x + w) - outdent * 1.5, (y + h) - outdent * 1.5, seqW, seqBH);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "#000";
+            ctx.stroke();
+
+            ctx.fillStyle = "#000";
+            ctx.fillText(
+              this.tasks.length, 
+              ((x + w) - outdent * 1.5) + seqPadding, 
+              ((y + h) - outdent * 1.5) + seqPadding + sequenceFontSize);
+          }
 
           ctx.font = titleFont;
           ctx.fillStyle = "#000";
@@ -294,9 +389,24 @@ var flowNgin = flowNgin || {
 
           if(this.exits.length > 0) {
             ctx.font = exitFont;
-            ctx.fillStyle = "#000";
             this.exits.forEach(function(exit){
+              ctx.fillStyle = "#000";
               ctx.fillText(exit.label, x + padding, exit._temp.yPos);
+              if(exit.to) {
+
+                if(exit.to.is(flowNgin._global.selectedStep)){
+                  ctx.fillStyle = flowNgin._config.EXIT_OUTBOUND_COLOR;
+                }else if(self.is(flowNgin._global.selectedStep)){
+                  ctx.fillStyle = flowNgin._config.EXIT_INBOUND_COLOR;
+                }else{
+                  ctx.fillStyle = "#000";
+                }
+
+                ctx.beginPath();
+                const exitXStart = (exit._temp.targetPoint.x < self.center.x) ? x : x + self.size.width;
+                ctx.arc(exitXStart, exit._temp.yPos - exitFontSize / 2, 3, 0, 2 * Math.PI);
+                ctx.fill();
+              }
             });
           }
         }
@@ -314,7 +424,6 @@ var flowNgin = flowNgin || {
     const STATE = {
       holdPoint: null,
       mouseDown: false,
-      selectedStep: undefined,
       holdStep: undefined,
       holdOffset: undefined,
       heldMovement: false,
@@ -340,6 +449,14 @@ var flowNgin = flowNgin || {
         _ctx.canvas.addEventListener(eventName, handleInteraction);
       })
     };
+
+    self.signal = function(signal, data) {
+      flowNgin._global.signals[signal] = data;
+    };
+
+    self.unsignal = function(signal) {
+      delete flowNgin._global.signals[signal];
+    }
 
     self.start = function() {
       running = true;
@@ -374,7 +491,7 @@ var flowNgin = flowNgin || {
 
     self.removeStep = function(id) {
       flowNgin.helpers.deleteStepById(id);
-      STATE.selectedStep = null;
+      flowNgin._global.selectedStep = null;
       document.querySelector(emitter).dispatchEvent(stepSelectedEvent);
     };
 
@@ -421,12 +538,12 @@ var flowNgin = flowNgin || {
     };
 
     self.selectedStep = function() {
-      return STATE.selectedStep;
+      return flowNgin._global.selectedStep;
     };
 
     self.activeSteps = function(excludeSelected) {
       return flowNgin._data.steps.filter(function(step) {
-        if(STATE.selectedStep && excludeSelected && STATE.selectedStep.id === step.id){
+        if(flowNgin._global.selectedStep && excludeSelected && flowNgin._global.selectedStep.id === step.id){
           return false;
         }
         return true;
@@ -526,12 +643,12 @@ var flowNgin = flowNgin || {
           STATE.holdStep = undefined;
           STATE.holdOffset = undefined;
           if(!STATE.heldMovement) {
-            STATE.selectedStep = flowNgin.helpers.getStepUnder(calculatedCursorPosition);
+            flowNgin._global.selectedStep = flowNgin.helpers.getStepUnder(calculatedCursorPosition);
             document.querySelector(emitter).dispatchEvent(stepSelectedEvent);
           }
           if(STATE.consecutiveClicks >= 2) {
             STATE.consecutiveClicks = 0;
-            if(!STATE.selectedStep) {
+            if(!flowNgin._global.selectedStep) {
               self.addStep(calculatedCursorPosition);
             }
           }
@@ -563,29 +680,29 @@ var flowNgin = flowNgin || {
     const drawDesignSupport = function(layer) {
       switch(layer) {
         case "low":
-          _ctx.save();
-          _ctx.lineWidth = 1;
-          const gridSize = SNAP * 4;
-          for(let x=gridSize; x <= _ctx.canvas.width; x+=gridSize){
-            for(let y=gridSize; y <= _ctx.canvas.height; y+=gridSize){
-              if((x % (gridSize * 5) === 0) || y % (gridSize * 5) === 0) {
-                _ctx.globalAlpha = 0.01;
-              }else{
-                _ctx.globalAlpha = 0.005;
-              }
-              _ctx.beginPath();
-              _ctx.moveTo(0, y);
-              _ctx.lineTo(_ctx.canvas.width, y);
-              _ctx.moveTo(x, 0);
-              _ctx.lineTo(x, _ctx.canvas.height);
-              _ctx.stroke();
-            }
-          }
-          _ctx.restore();
+          // _ctx.save();
+          // _ctx.lineWidth = 1;
+          // const gridSize = SNAP * 4;
+          // for(let x=gridSize; x <= _ctx.canvas.width; x+=gridSize){
+          //   for(let y=gridSize; y <= _ctx.canvas.height; y+=gridSize){
+          //     if((x % (gridSize * 5) === 0) || y % (gridSize * 5) === 0) {
+          //       _ctx.globalAlpha = 0.01;
+          //     }else{
+          //       _ctx.globalAlpha = 0.005;
+          //     }
+          //     _ctx.beginPath();
+          //     _ctx.moveTo(0, y);
+          //     _ctx.lineTo(_ctx.canvas.width, y);
+          //     _ctx.moveTo(x, 0);
+          //     _ctx.lineTo(x, _ctx.canvas.height);
+          //     _ctx.stroke();
+          //   }
+          // }
+          // _ctx.restore();
 
           if(STATE.holdStep) {
             _ctx.save();
-            _ctx.lineWidth = 2;
+            _ctx.lineWidth = 1;
             const ssp = STATE.holdStep.position.add(flowNgin._global.offset);
             const sss = STATE.holdStep.size;
             _ctx.globalAlpha = 0.3;
