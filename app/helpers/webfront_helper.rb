@@ -1,0 +1,2 @@
+module WebfrontHelper
+end
