@@ -1,0 +1,34 @@
+<emitter></emitter>
+<div id="editor">
+  <canvas></canvas>
+</div>
+<div id="selection">
+  <label>step <span data-role="ordinal"></span></label>
+  <label>title</label>
+  <input data-role="title" type="text" data-action="selection.update.title" />
+  <label>step</label>
+  <textarea data-role="step" data-action="selection.update.step"></textarea>
+  <label>exits <a data-action="selection.add.exit">(add)</a></label>
+  <div data-role="exits"></div>
+  <label>tasks <a data-action="selection.add.task">(add)</a></label>
+  <div data-role="tasks"></div>
+  <button data-action="selection.delete">delete</button>
+</div>
+<div style="display: none">
+  <div data-nlevel="root" data-structure="task">
+    <label>from</label>
+    <select data-role="from"></select>
+    <label>task</label>
+    <input data-role="label" type="text"/>
+    <button data-role="delete">delete</button>
+  </div>
+  <div data-nlevel="root" data-structure="exit">
+    <label>from</label>
+    <select data-role="from"></select>
+    <label>exit label</label>
+    <input data-role="label" type="text"/>
+    <label>to</label>
+    <select data-role="to"></select>
+    <button data-role="delete">delete</button>
+  </div>
+</div>

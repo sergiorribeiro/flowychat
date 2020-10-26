@@ -21,4 +21,8 @@ Rails.application.routes.draw do
   ##########################################
   get "/" => "webfront#show"
   ##########################################
+  get "/flows/:id/edit" => "editor#index"
+  ##########################################
+  get "/flows/:id/execute" => "executor#index"
+  ##########################################
 end
