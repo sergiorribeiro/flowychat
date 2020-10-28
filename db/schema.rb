@@ -17,8 +17,10 @@ ActiveRecord::Schema.define(version: 2020_10_06_105812) do
 
   create_table "flows", force: :cascade do |t|
     t.bigint "user_id"
+    t.string "identifier"
     t.string "title"
     t.jsonb "descriptor"
+    t.boolean "public"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

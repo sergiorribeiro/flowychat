@@ -1,5 +1,7 @@
-var flowNgin = flowNgin || {
-  _data: new function(){
+export default function FlowNg() {
+  const flowNgin = this;
+
+  flowNgin._data = new function(){
     let sequence = 1;
     this.steps = [];
     this.sequencer = {
@@ -11,22 +13,22 @@ var flowNgin = flowNgin || {
         return sequence;
       }
     }
-  },
+  };
 
-  _global: {
+  flowNgin._global = {
     offset: null,
     selectedStep: null,
     signals: {}
-  },
+  };
 
-  _config: {
+  flowNgin._config = {
     SNAP: 5,
     EXIT_INBOUND_COLOR: "#EA6D09",
     EXIT_OUTBOUND_COLOR: "#0BD49B",
     EXIT_HIGHLIGHT_COLOR: "#FFF63A",
-  },
+  };
 
-  helpers: {
+  flowNgin.helpers = {
     uuid: function() {
       return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
         var r = Math.random() * 16 | 0, v = c == "x" ? r : (r & 0x3 | 0x8);
@@ -89,9 +91,9 @@ var flowNgin = flowNgin || {
         return task.id !== id;
       });
     }
-  },
+  };
 
-  objects: {
+  flowNgin.objects = {
     Point: function(x, y) {
       this.x = x;
       this.y = y;
@@ -414,9 +416,9 @@ var flowNgin = flowNgin || {
         ctx.restore();
       }
     }
-  },
+  };
 
-  Engine: function(canvas, emitter, fps) {
+  flowNgin.Engine = function(canvas, emitter, fps) {
     const self = this;
     const FPS = fps;
     const SNAP = flowNgin._config.SNAP;
@@ -680,26 +682,6 @@ var flowNgin = flowNgin || {
     const drawDesignSupport = function(layer) {
       switch(layer) {
         case "low":
-          // _ctx.save();
-          // _ctx.lineWidth = 1;
-          // const gridSize = SNAP * 4;
-          // for(let x=gridSize; x <= _ctx.canvas.width; x+=gridSize){
-          //   for(let y=gridSize; y <= _ctx.canvas.height; y+=gridSize){
-          //     if((x % (gridSize * 5) === 0) || y % (gridSize * 5) === 0) {
-          //       _ctx.globalAlpha = 0.01;
-          //     }else{
-          //       _ctx.globalAlpha = 0.005;
-          //     }
-          //     _ctx.beginPath();
-          //     _ctx.moveTo(0, y);
-          //     _ctx.lineTo(_ctx.canvas.width, y);
-          //     _ctx.moveTo(x, 0);
-          //     _ctx.lineTo(x, _ctx.canvas.height);
-          //     _ctx.stroke();
-          //   }
-          // }
-          // _ctx.restore();
-
           if(STATE.holdStep) {
             _ctx.save();
             _ctx.lineWidth = 1;
@@ -748,5 +730,11 @@ var flowNgin = flowNgin || {
     rigEvents();
     self.start();
   }
-};
-flowNgin._global.offset = new flowNgin.objects.Point(0,0);
+
+  flowNgin.init = function(canvas, emitter, fps) {
+    flowNgin._global.offset = new flowNgin.objects.Point(0,0);
+    flowNgin.engine = new flowNgin.Engine(canvas, emitter, fps);
+  }
+
+  return flowNgin;
+}

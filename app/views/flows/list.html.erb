@@ -1,1 +1,9 @@
-my flows list
+<a href="<%= flows_new_path %>">Create flow</a>
+<% @flows.each do |flow| %>
+  <div>
+    <div><%= flow.title %></div>
+    <a href="/flows/<%= flow.identifier %>/edit">edit</a>
+    <a href="/flows/<%= flow.identifier %>/editor">editor</a>
+    <a href="/flows/<%= flow.identifier %>/execute">execute</a>
+  </div>
+<% end %>

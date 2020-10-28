@@ -9,6 +9,10 @@ Rails.application.routes.draw do
 
   ##########################################
   get "/flows" => "flows#list"
+  get "/flows/new" => "flows#new"
+  post "/flows/create" => "flows#create"
+  get "/flows/:identifier/edit" => "flows#edit"
+  post "/flows/:identifier/update" => "flows#update"
   ##########################################
   get "/gallery" => "gallery#list"
   ##########################################
@@ -21,8 +25,8 @@ Rails.application.routes.draw do
   ##########################################
   get "/" => "webfront#show"
   ##########################################
-  get "/flows/:id/edit" => "editor#index"
+  get "/flows/:identifier/editor" => "editor#index"
   ##########################################
-  get "/flows/:id/execute" => "executor#index"
+  get "/flows/:identifier/execute" => "executor#index"
   ##########################################
 end

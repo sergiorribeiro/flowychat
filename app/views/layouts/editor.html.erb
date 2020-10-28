@@ -9,7 +9,7 @@
     <%= javascript_pack_tag 'editor', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body>
+  <body data-flow-id="<%= @flow_id %>">
     <%= yield %>
   </body>
 </html>

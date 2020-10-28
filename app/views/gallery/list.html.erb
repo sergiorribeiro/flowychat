@@ -1,1 +1,7 @@
-gallery list
+<% @flows.each do |flow| %>
+  <div>
+    <div><%= flow.title %></div>
+    <a href="/flows/<%= flow.identifier %>/fork">fork</a>
+    <a href="/flows/<%= flow.identifier %>/execute">execute</a>
+  </div>
+<% end %>
