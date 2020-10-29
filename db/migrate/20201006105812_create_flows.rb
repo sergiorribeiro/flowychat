@@ -4,8 +4,8 @@ class CreateFlows < ActiveRecord::Migration[6.0]
       t.bigint :user_id
       t.string :identifier
       t.string :title
-      t.jsonb :descriptor
-      t.boolean :public
+      t.text :descriptor
+      t.boolean :public, null: false, default: false
 
       t.timestamps
     end

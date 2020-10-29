@@ -20,7 +20,7 @@ module Flowchart
     private
 
     def random_identifier
-      identifier = SecureRandom.alphanumeric(10)
+      identifier = SecureRandom.alphanumeric(6)
       random_identifier unless Flow.where(identifier: identifier).count.zero?
       identifier
     end

@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Editor</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -9,7 +10,10 @@
     <%= javascript_pack_tag 'executor', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body data-flow-id="<%= @flow_id %>">
+  <body 
+    data-flow-id="<%= @flow_id %>" 
+    data-authorization="<%= @user&.authorization_token %>" 
+    data-execution-id="<%= @execution_id %>">
     <%= yield %>
   </body>
 </html>

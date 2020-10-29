@@ -10,17 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_06_105812) do
+ActiveRecord::Schema.define(version: 2020_10_29_115703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "executions", force: :cascade do |t|
+    t.string "identifier"
+    t.bigint "flow_id"
+    t.text "path"
+    t.boolean "complete"
+    t.datetime "invalidated_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "flows", force: :cascade do |t|
     t.bigint "user_id"
     t.string "identifier"
     t.string "title"
-    t.jsonb "descriptor"
-    t.boolean "public"
+    t.text "descriptor"
+    t.boolean "public", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

@@ -590,8 +590,10 @@ export default function FlowNg() {
     };
 
     self.import = function(raw) {
-      const data = JSON.parse(raw);
+      const data = (typeof raw) === "object" ? raw : JSON.parse(raw);
       flowNgin._data.steps = [];
+
+      if(!data.steps){ return; }
 
       data.steps.forEach(function(step) {
         const newstep = new flowNgin.objects.Step();

@@ -17,6 +17,35 @@ export default function FlowEd() {
     rigActions();
     self.fng = engine;
     self.fng.init(canvas, emitter, fps);
+
+    loadDescriptor();
+  }
+
+  self.save = function() {
+    const descriptor = self.fng.engine.export();
+    api("put", "/api/flows/:id", descriptor, "text/plain; charset=utf-8", function() {
+      alert("shit is saved!");
+    });
+  }
+
+  function api(method, url, body, content_type, callback){
+    const authorization_token = document.body.dataset.authorization;
+    const flow_id = document.body.dataset.flowId;
+
+    let req = new XMLHttpRequest();
+    req.onload = function() {
+      callback(JSON.parse(req.responseText));
+    };
+    req.open(method, url.replace(":id",flow_id), true);
+    req.setRequestHeader("authorization", authorization_token);
+    if(content_type) { req.setRequestHeader("Content-type", content_type); }
+    req.send(body);
+  }
+
+  function loadDescriptor() {
+    api("get", "/api/flows/:id", null, null, function(flow_data) {
+      self.fng.engine.import(flow_data.descriptor);
+    });
   }
 
   function rigActions() {

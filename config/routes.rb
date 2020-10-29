@@ -2,9 +2,8 @@ Rails.application.routes.draw do
   root to: "webfront#show", as: :root
 
   namespace :api, constraints: { format: :json } do
-    namespace :v1 do
-      resources :flow, only: [:show, :update]
-    end
+    resources :flows, only: [:show, :update]
+    resources :executions, only: [:show, :update]
   end
 
   ##########################################
@@ -28,5 +27,5 @@ Rails.application.routes.draw do
   get "/flows/:identifier/editor" => "editor#index"
   ##########################################
   get "/flows/:identifier/execute" => "executor#index"
-  ##########################################
+  get "/x/:identifier" => "executor#resume"
 end
