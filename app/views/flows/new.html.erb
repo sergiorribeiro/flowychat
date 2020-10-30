@@ -1,6 +1,9 @@
 <%= form_with(url: flows_create_path, method: :post, local: true) do |form| %>
     <%= form.label :title %>
     <%= form.text_field :title %>
+
+    <%= form.label :public %>
+    <%= form.check_box :public %>
   
     <%= link_to "Cancel", flows_path %>
     <%= form.submit "Save Flow" %>

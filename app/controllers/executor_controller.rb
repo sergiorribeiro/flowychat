@@ -22,7 +22,8 @@ class ExecutorController < ApplicationController
   def resume
     @execution_id = execution_params.fetch(:identifier, nil)
     @flow_id = execution.flow.identifier
-    
+    @permalink = request.original_url
+
     render :index, layout: "executor"
   end
 

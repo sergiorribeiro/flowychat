@@ -4,6 +4,7 @@ module Flowchart
   class Create < Service
     def initialize(params, user)
       @title = params.fetch(:title, nil)
+      @public = params.fetch(:public, false)
       @user = user
     end
 
@@ -12,6 +13,7 @@ module Flowchart
         user_id: @user.id,
         identifier: random_identifier,
         title: @title,
+        public: @public,
         descriptor: {},
       )
       ok!(flow)

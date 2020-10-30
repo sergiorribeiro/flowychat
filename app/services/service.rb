@@ -1,9 +1,9 @@
 class Service
-  def ok!(result)
+  def ok!(result=nil)
     ServiceResult.new(true, result)
   end
 
-  def nok!(message)
+  def nok!(message=nil)
     ServiceResult.new(false, message)
   end
 end

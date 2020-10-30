@@ -7,8 +7,7 @@ export default function Ctl() {
   self.init = function() {
     api("get", "/api/executions/:exec_id", null, null, function(data) {
       executor = new ExecNg(JSON.parse(data.flow_descriptor));
-      let flow = executor.flowThrough(data.path);
-      buildFlow(flow);
+      buildFlow(executor.setPath(data.path));
     });
   }
 
@@ -74,6 +73,13 @@ export default function Ctl() {
     let exb = document.querySelectorAll("exchange");
     if(exb.length > 0)
         window.scrollTo(0,exb[exb.length-1].offsetTop);
+
+    api("put", "/api/executions/:exec_id", JSON.stringify({
+      path: executor.currentPath.join("/"),
+      completed: executor.executionComplete()
+    }), "text/plain; charset=utf-8", function() {
+      // silence is golden
+    });
   }
   
   function buildChecklistItem(item) {

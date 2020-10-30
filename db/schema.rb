@@ -18,8 +18,9 @@ ActiveRecord::Schema.define(version: 2020_10_29_115703) do
   create_table "executions", force: :cascade do |t|
     t.string "identifier"
     t.bigint "flow_id"
-    t.text "path"
-    t.boolean "complete"
+    t.bigint "user_id"
+    t.text "path", default: "", null: false
+    t.boolean "complete", default: false, null: false
     t.datetime "invalidated_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

@@ -16,12 +16,12 @@ class Api::ExecutionsController < ApiController
     flow_permissions = ::Access::FlowPermissions.new(@execution.flow, current_user).call.get
 
     if flow_permissions[:can_execute]
-      path = request.body.read
-
+      execution_report = JSON.parse(request.body.read, symbolize_names: true)
       service_result = ::FlowExecution::Update.new(
         {
           identifier: @execution.identifier,
-          path: path,
+          path: execution_report[:path],
+          completed: execution_report[:completed]
         }
       ).call
 

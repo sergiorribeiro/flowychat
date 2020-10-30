@@ -1,6 +1,9 @@
 <%= form_with(url: "/flows/#{@flow.identifier}/update", method: :post, local: true) do |form| %>
     <%= form.label :title %>
     <%= form.text_field :title, value: @flow.title %>
+
+    <%= form.label :public %>
+    <%= form.check_box :public, checked: @flow.public? %>
   
     <%= link_to "Cancel", flows_path %>
     <%= form.submit "Save Flow" %>

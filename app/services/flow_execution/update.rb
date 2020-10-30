@@ -6,7 +6,7 @@ module FlowExecution
     end
 
     def call
-      execution = Execution.find_by(identifier: @identifier)
+      execution = Execution.find_by(identifier: @identifier, complete: false)
       execution.path = @path unless @path.nil?
       execution.save
       ok!(execution)

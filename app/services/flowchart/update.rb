@@ -4,6 +4,7 @@ module Flowchart
       @identifier = params.fetch(:identifier, nil)
       @title = params.fetch(:title, nil)
       @descriptor = params.fetch(:descriptor, nil)
+      @public = params.fetch(:public, false)
       @user = user
     end
 
@@ -11,6 +12,7 @@ module Flowchart
       flow = Flow.find_by(identifier: @identifier)
       flow.title = @title unless @title.nil?
       flow.descriptor = @descriptor unless @descriptor.nil?
+      flow.public = @public
       flow.save
       ok!(flow)
     end

@@ -26,17 +26,22 @@ export default class ExecNg {
       return true;
     };
 
+    this.setPath = (flowData) => {
+      this._path = flowData === "" ? [] : flowData.split("/");
+      return this.flowThrough(flowData);
+    }
+
+    this.executionComplete = () => {
+      return this._completed;
+    }
+
     this._currentNode = this.startNode();
     this._path = [];
+    this._completed = false;
   }
 
   get currentPath() {
     return this._path;
-  }
-
-  set path(flowData) {
-    this._path = flowData.split("/");
-    this.flowThrough(flowData);
   }
 
   resetExecution = () => {
@@ -81,6 +86,8 @@ export default class ExecNg {
           ctl.checklist.push(t);
         });
       }
+
+      if(newNode.exits.length === 0){ this._completed = true; }
 
       this._currentNode = newNode;
     }
