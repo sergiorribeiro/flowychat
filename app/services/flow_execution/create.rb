@@ -2,9 +2,8 @@ require "securerandom"
 
 module FlowExecution
   class Create < Service
-    def initialize(flow_id, user)
+    def initialize(flow_id)
       @flow_id = flow_id
-      @user = user
     end
 
     def call

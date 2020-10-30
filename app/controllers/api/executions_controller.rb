@@ -13,27 +13,26 @@ class Api::ExecutionsController < ApiController
   end
 
   def update
-    # flow_permissions = ::Access::FlowPermissions.new(@flow, current_user).call.get
+    flow_permissions = ::Access::FlowPermissions.new(@execution.flow, current_user).call.get
 
-    # if flow_permissions[:can_edit]
-    #   descriptor = request.body.read
+    if flow_permissions[:can_execute]
+      path = request.body.read
 
-    #   service_result = ::Flowchart::Update.new(
-    #     { 
-    #       identifier: @flow.identifier,
-    #       descriptor: descriptor,
-    #     },
-    #     current_user
-    #   ).call
+      service_result = ::FlowExecution::Update.new(
+        {
+          identifier: @execution.identifier,
+          path: path,
+        }
+      ).call
 
-    #   if service_result.ok?
-    #     render json: {}, status: 200
-    #   else
-    #     render json: {}, status: 500
-    #   end
-    # else
-    #   render json: {}, status: 401
-    # end
+      if service_result.ok?
+        render json: {}, status: 200
+      else
+        render json: {}, status: 500
+      end
+    else
+      render json: {}, status: 401
+    end
   end
 
   private
