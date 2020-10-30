@@ -7,7 +7,7 @@ export default function Ctl() {
   self.init = function() {
     api("get", "/api/executions/:exec_id", null, null, function(data) {
       executor = new ExecNg(JSON.parse(data.flow_descriptor));
-      let flow = executor.flowUntil(data.path);
+      let flow = executor.flowThrough(data.path);
       buildFlow(flow);
     });
   }
@@ -43,7 +43,7 @@ export default function Ctl() {
         node.exits.forEach(n => {
             let answer = document.createElement("answer");
             answer.innerHTML = n.label;
-            answer.dataset.node = n.to;
+            answer.dataset.exitId = n.uid;
             answer.addEventListener("click",stepForward)
             answers.appendChild(answer);
         });
@@ -68,8 +68,8 @@ export default function Ctl() {
   }
   
   function stepForward() {
-    let nextNode = this.dataset.node;
-    buildFlow(executor.stepForward(nextNode));
+    let exitId = this.dataset.exitId;
+    buildFlow(executor.stepForward(exitId));
 
     let exb = document.querySelectorAll("exchange");
     if(exb.length > 0)
@@ -78,7 +78,7 @@ export default function Ctl() {
   
   function buildChecklistItem(item) {
     let cli = document.createElement("li");
-    cli.innerHTML = item;
+    cli.innerHTML = item.label;
     return cli;
   }
 }

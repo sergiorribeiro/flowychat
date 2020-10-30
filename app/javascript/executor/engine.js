@@ -22,12 +22,12 @@ export default class ExecNg {
       };
     };
 
-    this.coherentMove = (id,currentId,exits) => {
-      return (exits.find(x => x.target === id && ((!x.from) || (x.from === currentId)))) !== undefined;
+    this.validExit = (id) => {
+      return true;
     };
 
     this._currentNode = this.startNode();
-    this._path = [this._currentNode.id];
+    this._path = [];
   }
 
   get currentPath() {
@@ -36,61 +36,53 @@ export default class ExecNg {
 
   set path(flowData) {
     this._path = flowData.split("/");
-    this.flowUntil(flowData);
+    this.flowThrough(flowData);
+  }
+
+  resetExecution = () => {
+    this._currentNode = this.startNode();
   }
 
   stepForward = (id) => {
-    if(!this.coherentMove(id, this._currentNode.id, this._currentNode.exits))
-      throw `Node flow exception: (id=${id} not an exit of id=${this._currentNode.id})`;
+    if(!this.validExit(id))
+      throw `Node flow exception: (exit=${id} not an exit of id=${this._currentNode.id})`;
     this._path.push(id);
-    return this.flowUntil(this._path.join("/"));
+    return this.flowThrough(this._path.join("/"));
   }
 
-  stepBackward = (steps) => {
-    if(this._path.length == 1)
-      return;
-    for(let i=steps;i>0;i--)
-      this._path = this._path.pop();
-    return this.flowUntil(this._path.join("/"));
-  }
-
-  flowUntil = (pathData) => {
-    if(!pathData)
-      pathData = this.startNode().id;
+  flowThrough = (pathData) => {
+    this.resetExecution();
     let ctl = {
-      nodes: [],
+      nodes: [this._currentNode],
       checklist: []
     };
-    let path = pathData.split("/").reverse();
-    let breadcrumb = [];
-    let lastNode = null;
+    let path = pathData === "" ? [] : pathData.split("/").reverse();
 
     while(path.length > 0){
-      let nodeId = path.pop();
-      let exitId = path[path.length-1];
-      breadcrumb.push(nodeId);
-      if(lastNode != null && !this.coherentMove(nodeId, this._currentNode.uid, lastNode.exits))
-        throw `Node flow exception: (id=${nodeId} not an exit of id=${lastNode.id})`;
-      let currentNode = this.nodeById(nodeId);
-      let exitNode = exitId !== undefined ? this.nodeById(exitId) : null;
-      currentNode.path = breadcrumb;
+      let exitId = path.pop();
+      if(!this.validExit(exitId))
+        throw `Node flow exception: (exit=${exitId} not an exit of id=${this._currentNode.id})`;
+      let exit = this._currentNode.exits.find(x => x.uid === exitId);
+      let nextNode = this.nodeById(exit.to);
+      let currentNode = this.nodeById(this._currentNode.id);
+
+      ctl.nodes[ctl.nodes.length-1].exit = { label: exit.label };
+
       let newNode = {
-        id: currentNode.uid,
-        path: breadcrumb,
-        question: currentNode.step,
-        exits: currentNode.exits.filter(x => { return (x.from === null) || (x.from === this._currentNode.uid); }),
-        exit: exitNode
+        id: nextNode.uid,
+        question: nextNode.step,
+        exits: nextNode.exits.filter(x => { return (x.from === null) || (x.from === this._currentNode.id); }),
+        exit: null
       };
       ctl.nodes.push(newNode);
-      lastNode = newNode;
-      this._currentNode = lastNode;
+
       if(currentNode.tasks){
-        for(let i=0;i<currentNode.tasks.length;i++){
-          let task = currentNode.tasks[i];
-          if(ctl.checklist.indexOf(task) == -1)
-          ctl.checklist.push(task);
-        }
+        currentNode.tasks.forEach(t => {
+          ctl.checklist.push(t);
+        });
       }
+
+      this._currentNode = newNode;
     }
     return ctl;
   }
