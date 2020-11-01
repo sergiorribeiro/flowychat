@@ -16,7 +16,7 @@ class AccountController < ApplicationController
   end
 
   def sign_out
-    ::Account::SignOut.new.call
+    ::Account::SignOut.new(current_user, cookies).call
     redirect_to "/"
   end
 

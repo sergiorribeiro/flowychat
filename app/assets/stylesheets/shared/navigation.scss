@@ -1,0 +1,76 @@
+.top_navigation {
+  display: flex;
+  position: fixed;
+  top:0px;
+  right: 0px;
+  align-items: center;
+
+  &>div {
+    position: relative;
+    border-radius: 0px 0px 0px 16px;
+    height: 45px;
+
+    &:first-child {
+      background-color: #AAA;
+      display: flex;
+      align-items: center;
+      padding-left: 14px;
+      padding-right: 20px;
+      transform: translateX(12px);
+      box-shadow: 0 0 3px 1px #222;
+
+      .logo {
+        margin-right: 12px;
+        text-decoration: none;
+        color: $BLACK;
+        font-weight: 100;
+      }
+    }
+
+    &:last-child {
+      background-color: #666;
+      display: flex;
+      box-shadow: 0 0 3px 1px #222;
+
+      a {
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: $BLACK;
+        padding: 3px 12px;
+    
+        &:hover{
+          div {
+            color: #CCC;
+          }
+
+          svg path {
+            stroke-width: 3;
+            stroke: #CCC;
+          }
+        }
+    
+        .-active {
+          svg path {
+            stroke-width: 3;
+          }
+        }
+    
+        div {
+          font-size: 9px;
+          text-transform: uppercase;
+          color: #BBB;
+          transition: color 450ms ease-in-out;
+        }
+
+        svg {    
+          path {
+            stroke: #BBB;
+            stroke-width: 2;
+            transition: all 450ms ease-in-out;
+          }
+        }
+      }
+    }
+  }
+}

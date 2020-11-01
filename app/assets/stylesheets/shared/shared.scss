@@ -1,1 +1,10 @@
+@import "vars.scss";
 @import "mixins.scss";
+
+@import "fonts.scss";
+
+@import "navigation.scss";
+
+html, body {
+  font-family: 'Open Sans';
+}

@@ -1,0 +1,54 @@
+<div class="top_navigation">
+  <div>
+    <a class="logo" href="/">
+      flowy<strong>chat</strong>
+    </a>
+  </div>
+  <div>
+    <% if @current_user.nil? %>
+      <a href="/sign_in">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M44 72.0001V10.775C44 9.40986 42.6626 8.44592 41.3675 8.8776L21.3675 15.5443C20.5509 15.8165 20 16.5808 20 17.4416V72.0001" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M12 72H68" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M60 72V18C60 16.8954 59.1046 16 58 16H44" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M34.0171 45.2609L37.9829 44.7388" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div>login</div>
+      </a>
+    <% else %>
+      <a href="/flows">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M34.9282 60H47.5C52.1944 60 56 56.1944 56 51.5C56 46.8056 52.1944 43 47.5 43H27.5C21.1487 43 16 37.8513 16 31.5C16 25.1487 21.1487 20 27.5 20H49.0718" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M24.5359 66C26.6795 67.2376 29.3205 67.2376 31.4641 66C33.6077 64.7624 34.9282 62.4752 34.9282 60C34.9282 57.5248 33.6077 55.2376 31.4641 54C29.3205 52.7624 26.6795 52.7624 24.5359 54C22.3923 55.2376 21.0718 57.5248 21.0718 60C21.0718 62.4752 22.3923 64.7624 24.5359 66Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M52.5359 26C54.6795 27.2376 57.3205 27.2376 59.4641 26C61.6077 24.7624 62.9282 22.4752 62.9282 20C62.9282 17.5248 61.6077 15.2376 59.4641 14C57.3205 12.7624 54.6795 12.7624 52.5359 14C50.3923 15.2376 49.0718 17.5248 49.0718 20C49.0718 22.4752 50.3923 24.7624 52.5359 26Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div>flows</div>
+      </a>
+      <a href="/gallery">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M39.2121 16.3376C39.7152 16.122 40.2847 16.122 40.7878 16.3376L63.7106 26.1617C65.3268 26.8543 65.3268 29.1456 63.7106 29.8383L40.7878 39.6623C40.2847 39.8779 39.7152 39.8779 39.2121 39.6623L16.2893 29.8383C14.6731 29.1456 14.6731 26.8543 16.2893 26.1617L39.2121 16.3376Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M24.1987 33.772L16.2893 37.1617C14.6731 37.8544 14.6731 40.1456 16.2893 40.8383L39.2121 50.6623C39.7152 50.878 40.2847 50.878 40.7878 50.6623L63.7106 40.8383C65.3268 40.1456 65.3268 37.8544 63.7106 37.1617L55.8013 33.772" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M24.1987 44.772L16.2893 48.1617C14.6731 48.8544 14.6731 51.1456 16.2893 51.8383L39.2121 61.6623C39.7152 61.878 40.2847 61.878 40.7878 61.6623L63.7106 51.8383C65.3268 51.1456 65.3268 48.8544 63.7106 48.1617L55.8013 44.772" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div>gallery</div>
+      </a>
+      <a href="/myself">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M68 40C68 55.464 55.464 68 40 68C24.536 68 12 55.464 12 40C12 24.536 24.536 12 40 12C55.464 12 68 24.536 68 40Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M58.3013 61.192C53.3935 65.4341 46.9966 68 40.0004 68C33.0041 68 26.6071 65.434 21.6992 61.1918C23.0685 58.9261 25.1923 57.1319 27.8006 56.1934C35.6862 53.3561 44.3142 53.3561 52.1998 56.1934C54.8082 57.1319 56.9321 58.9262 58.3013 61.192Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M44.9581 46.1552C48.0026 44.6538 50.2028 41.8537 50.9413 38.5404L51.0113 38.2265C51.7558 34.8862 50.9692 31.388 48.8665 28.688L48.7564 28.5466C46.6536 25.8465 43.4227 24.2676 40.0004 24.2676C36.5781 24.2676 33.3472 25.8465 31.2445 28.5466L31.1344 28.688C29.0316 31.388 28.245 34.8862 28.9895 38.2265L29.0595 38.5404C29.798 41.8537 31.9982 44.6538 35.0427 46.1552C38.1682 47.6964 41.8327 47.6964 44.9581 46.1552Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div>myself</div>
+      </a>
+      <a href="/do_sign_out">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M76 72H20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M68 72V18C68 16.8954 67.1046 16 66 16H30C28.8954 16 28 16.8954 28 18V72" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M28 72.0001H4V10.775C4 9.40986 5.33739 8.44592 6.63245 8.8776L26.6325 15.5443C27.4491 15.8165 28 16.5808 28 17.4416" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M13.9658 45.2609L10.0001 44.7388" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div>logout</div>
+      </a>
+    <% end %>
+  </div>
+</div>

@@ -8,7 +8,7 @@ module Account
     def call
       @user.authorization_token = nil
       @user.save
-      cookies.delete :session_token
+      @cookies.delete :session_token
       ok!
     end
   end
