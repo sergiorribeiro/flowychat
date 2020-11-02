@@ -10,5 +10,10 @@ class CreateExecutions < ActiveRecord::Migration[6.0]
 
       t.timestamps
     end
+
+    add_index :executions, :flow_id
+    add_index :executions, :user_id
+    add_foreign_key :executions, :flows
+    add_foreign_key :executions, :users
   end
 end

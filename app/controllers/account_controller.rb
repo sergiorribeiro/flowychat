@@ -1,10 +1,22 @@
 class AccountController < ApplicationController
+  before_action :location_info
   before_action :user_from_cookie
   before_action :redirect_if_in_session, only: [:sign_in_form, :sign_up_form, :sign_in, :sign_up]
 
   def sign_in_form;  end
 
   def sign_up_form;  end
+
+  def form;  end
+
+  def update
+    service_result = ::Account::Update.new(myself_params).call
+    unless service_result.ok?
+      render "/form", notice: service_result.get
+    else
+      redirect_to "/flows"
+    end
+  end
 
   def sign_in
     service_result = ::Account::SignIn.new(sign_in_params, cookies).call

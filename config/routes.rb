@@ -19,6 +19,8 @@ Rails.application.routes.draw do
   get "/sign_in" => "account#sign_in_form"
   post "/do_sign_in" => "account#sign_in"
   get "/do_sign_out" => "account#sign_out"
+  get "/myself" => "account#form"
+  post "/myself/update" => "account#update"
   ##########################################
   get "/sign_up" => "account#sign_up_form"
   post "/do_sign_up" => "account#sign_up"
@@ -29,4 +31,6 @@ Rails.application.routes.draw do
   ##########################################
   get "/flows/:identifier/execute" => "executor#index"
   get "/x/:identifier" => "executor#resume"
+  ##########################################
+  get "/media/:id/inline_image" => "media#inline_image"
 end

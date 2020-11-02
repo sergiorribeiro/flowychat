@@ -1,0 +1,78 @@
+<div class="flow_record">
+  <% if flow.public? && type == :collection %>
+    <div class="public_ribbon">public</div>
+  <% end %>
+  <% if flow.copyable? && type == :collection %>
+    <div class="copyable_ribbon">copyable</div>
+  <% end %>
+  <% unless flow.picture.nil? %>
+  <div class="image">
+    <img src="media/<%= flow.picture %>/inline_image"/>
+  </div>
+  <% else %>
+    <div class="image_placeholder"></div>
+  <% end %>
+  <div class="information">
+    <div class="description">
+      <h2><%= flow.title %></h2>
+      <div><%= flow.brief %></div>
+      <div class="permalink">
+        <strong>permalink:</strong>&nbsp;<code><%= @base_url %>/x/<%= flow.identifier %></code>
+      </div>
+      <div class="stats">
+        <div><strong>by:</strong>&nbsp;<%= flow.user.display_name %></div>
+        <% if type == :gallery %>
+        <div><strong>executions:</strong>&nbsp;<%= flow.executions.count %></div>
+        <% else %>
+        <div><strong>executions:</strong>&nbsp;<%= flow.executions.where(complete: true).count %>&nbsp;/&nbsp;<%= flow.executions.count %></div>
+        <% end %>
+      </div>
+    </div>
+    <div class="actions">
+      <% if type == :collection %>
+        <a href="/flows/<%= flow.identifier %>/edit">
+          <svg viewBox="0 0 80 80" fill="none">
+            <path d="M38.4 20.7417H14C12.8954 20.7417 12 21.6371 12 22.7417V66.7417C12 67.8463 12.8954 68.7417 14 68.7417H58C59.1046 68.7417 60 67.8463 60 66.7417V42.342" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M68.0145 21.8972C68.7943 21.1174 68.7943 19.8532 68.0145 19.0734L62.3577 13.4166C61.5753 12.6342 60.3069 12.6342 59.5246 13.4166L30.6996 42.2416C28.1991 44.7421 26.5974 48.0005 26.1449 51.5077L25.7115 54.8664C25.6479 55.359 26.0674 55.7785 26.56 55.715L29.9187 55.2816C33.4259 54.829 36.6844 53.2273 39.1849 50.7268L68.0145 21.8972Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M52.146 20.8037L60.6266 29.2843" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <div>edit</div>
+        </a>
+        <a href="/flows/<%= flow.identifier %>/editor">
+          <svg viewBox="0 0 80 80" fill="none">
+            <path d="M34.9282 60H47.5C52.1944 60 56 56.1944 56 51.5C56 46.8056 52.1944 43 47.5 43H27.5C21.1487 43 16 37.8513 16 31.5C16 25.1487 21.1487 20 27.5 20H49.0718" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M24.5359 66C26.6795 67.2376 29.3205 67.2376 31.4641 66C33.6077 64.7624 34.9282 62.4752 34.9282 60C34.9282 57.5248 33.6077 55.2376 31.4641 54C29.3205 52.7624 26.6795 52.7624 24.5359 54C22.3923 55.2376 21.0718 57.5248 21.0718 60C21.0718 62.4752 22.3923 64.7624 24.5359 66Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M52.5359 26C54.6795 27.2376 57.3205 27.2376 59.4641 26C61.6077 24.7624 62.9282 22.4752 62.9282 20C62.9282 17.5248 61.6077 15.2376 59.4641 14C57.3205 12.7624 54.6795 12.7624 52.5359 14C50.3923 15.2376 49.0718 17.5248 49.0718 20C49.0718 22.4752 50.3923 24.7624 52.5359 26Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <div>design</div>
+        </a>
+      <% end %>
+      <a href="/flows/<%= flow.identifier %>/execute">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M57.9611 38.2635C59.3048 39.0313 59.3048 40.9687 57.9611 41.7365L21.9923 62.2901C20.659 63.052 19 62.0893 19 60.5537L19 19.4464C19 17.9107 20.659 16.948 21.9923 17.7099L57.9611 38.2635Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <div>execute</div>
+      </a>
+      <% if type == :gallery && flow.copyable? %>
+        <a href="/flows/<%= flow.identifier %>/copy">
+          <svg viewBox="0 0 80 80" fill="none">
+            <path d="M41.73 25.9629C42.4703 25.2671 43.4494 24.8778 44.4689 24.8777L57.9995 24.8762C60.2089 24.876 62 26.6669 62 28.8762L62 62.8761C62 65.0853 60.2091 66.8761 58 66.8761H34C31.7909 66.8761 30 65.0853 30 62.8761V39.4459C30 38.4291 30.3871 37.4521 31.0801 36.712" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M30 54.8758H22C19.7909 54.8758 18 53.0849 18 50.8758L18 16.8759C18 14.6665 19.7911 12.8756 22.0004 12.8759L45.9993 12.8761C48.2087 12.8757 50 14.6667 50 16.8761V24.8767" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M31.1262 36.6605L41.6635 26.0218C42.0812 25.6001 42.8002 25.8965 42.8002 26.4901V33.7979C42.8002 36.007 41.0093 37.7979 38.8002 37.7979H31.6002C31.0073 37.7979 30.7089 37.0818 31.1262 36.6605Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <div>copy</div>
+        </a>
+      <% end %>
+      <% if type == :collection %>
+        <a href="/flows/<%= flow.identifier %>/delete">
+          <svg viewBox="0 0 80 80" fill="none">
+            <path d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M65 20H15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <div>delete</div>
+        </a>
+      <% end %>
+    </div>
+  </div>
+</div>

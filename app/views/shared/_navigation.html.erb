@@ -1,22 +1,43 @@
+<div class="breadcrumbs">
+  <div class="crumbs">
+    <a href="/" class="fclogo">flowy<strong>chat</strong></a>
+    <% unless @breadcrumbs.count.zero? %>
+      <div>
+        <% @breadcrumbs.each do |crumb| %>
+        <span>&nbsp;/&nbsp;</span>
+        <% if crumb[:url].nil? %>
+          <span><%= crumb[:label] %></span>
+        <% else %>
+          <a href="<%= crumb[:url] %>"><%= crumb[:label] %></a>
+        <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
 <div class="top_navigation">
   <div>
-    <a class="logo" href="/">
-      flowy<strong>chat</strong>
-    </a>
-  </div>
-  <div>
     <% if @current_user.nil? %>
-      <a href="/sign_in">
-        <svg viewBox="0 0 80 80" fill="none">
-          <path d="M44 72.0001V10.775C44 9.40986 42.6626 8.44592 41.3675 8.8776L21.3675 15.5443C20.5509 15.8165 20 16.5808 20 17.4416V72.0001" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M12 72H68" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M60 72V18C60 16.8954 59.1046 16 58 16H44" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M34.0171 45.2609L37.9829 44.7388" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <div>login</div>
-      </a>
+      <% unless @action == "account/sign_in_form" %>
+        <a href="/sign_in" class="<%= "-active" if @action == "account/sign_in_form" %>">
+          <svg viewBox="0 0 80 80" fill="none">
+            <path d="M26.3896 23.2362C23.2994 25.5907 20.8542 28.7374 19.3419 32.3884C17.0914 37.8215 17.0914 43.9259 19.3419 49.359C21.5923 54.792 25.9088 59.1085 31.3419 61.359C36.7749 63.6094 42.8794 63.6094 48.3124 61.359C53.7455 59.1085 58.062 54.792 60.3124 49.359C62.5629 43.9259 62.5629 37.8215 60.3124 32.3884C58.6509 28.3772 55.8633 24.9746 52.3315 22.5627" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M39.8264 42.9148L39.8264 16.9148" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <div>login</div>
+        </a>
+      <% end %>
+      <% unless @action == "account/sign_up_form" %>
+        <a href="/sign_up" class="<%= "-active" if @action == "account/sign_up_form" %>">
+          <svg viewBox="0 0 80 80" fill="none">
+            <path d="M32 13C32 11.9391 32.4214 10.9217 33.1716 10.1716L37.1716 6.17157C38.7337 4.60947 41.2663 4.60948 42.8284 6.17157L46.8284 10.1716C47.5786 10.9217 48 11.9391 48 13V15.3431L44 19.3431L48 23.3431V25.3431L44 29.3431L48 33.3431V41.2142C53.9269 44.1596 58 50.2757 58 57.3431C58 67.2843 49.9411 75.3431 40 75.3431C30.0589 75.3431 22 67.2843 22 57.3431C22 50.2757 26.0731 44.1596 32 41.2142V13Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M40 61.3433C37.7909 61.3433 36 63.1341 36 65.3433C36 67.5524 37.7909 69.3433 40 69.3433C42.2091 69.3433 44 67.5524 44 65.3433C44 63.1341 42.2091 61.3433 40 61.3433Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <div>sign up</div>
+        </a>
+      <% end %>
     <% else %>
-      <a href="/flows">
+      <a href="/flows" class="<%= "-active" if @action == "flows/list" %>">
         <svg viewBox="0 0 80 80" fill="none">
           <path d="M34.9282 60H47.5C52.1944 60 56 56.1944 56 51.5C56 46.8056 52.1944 43 47.5 43H27.5C21.1487 43 16 37.8513 16 31.5C16 25.1487 21.1487 20 27.5 20H49.0718" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M24.5359 66C26.6795 67.2376 29.3205 67.2376 31.4641 66C33.6077 64.7624 34.9282 62.4752 34.9282 60C34.9282 57.5248 33.6077 55.2376 31.4641 54C29.3205 52.7624 26.6795 52.7624 24.5359 54C22.3923 55.2376 21.0718 57.5248 21.0718 60C21.0718 62.4752 22.3923 64.7624 24.5359 66Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
@@ -24,7 +45,7 @@
         </svg>
         <div>flows</div>
       </a>
-      <a href="/gallery">
+      <a href="/gallery" class="<%= "-active" if @action == "gallery/list" %>">
         <svg viewBox="0 0 80 80" fill="none">
           <path d="M39.2121 16.3376C39.7152 16.122 40.2847 16.122 40.7878 16.3376L63.7106 26.1617C65.3268 26.8543 65.3268 29.1456 63.7106 29.8383L40.7878 39.6623C40.2847 39.8779 39.7152 39.8779 39.2121 39.6623L16.2893 29.8383C14.6731 29.1456 14.6731 26.8543 16.2893 26.1617L39.2121 16.3376Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M24.1987 33.772L16.2893 37.1617C14.6731 37.8544 14.6731 40.1456 16.2893 40.8383L39.2121 50.6623C39.7152 50.878 40.2847 50.878 40.7878 50.6623L63.7106 40.8383C65.3268 40.1456 65.3268 37.8544 63.7106 37.1617L55.8013 33.772" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
@@ -42,10 +63,8 @@
       </a>
       <a href="/do_sign_out">
         <svg viewBox="0 0 80 80" fill="none">
-          <path d="M76 72H20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M68 72V18C68 16.8954 67.1046 16 66 16H30C28.8954 16 28 16.8954 28 18V72" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M28 72.0001H4V10.775C4 9.40986 5.33739 8.44592 6.63245 8.8776L26.6325 15.5443C27.4491 15.8165 28 16.5808 28 17.4416" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M13.9658 45.2609L10.0001 44.7388" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M26.3896 23.2362C23.2994 25.5907 20.8542 28.7374 19.3419 32.3884C17.0914 37.8215 17.0914 43.9259 19.3419 49.359C21.5923 54.792 25.9088 59.1085 31.3419 61.359C36.7749 63.6094 42.8794 63.6094 48.3124 61.359C53.7455 59.1085 58.062 54.792 60.3124 49.359C62.5629 43.9259 62.5629 37.8215 60.3124 32.3884C58.6509 28.3772 55.8633 24.9746 52.3315 22.5627" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M39.8264 42.9148L39.8264 16.9148" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <div>logout</div>
       </a>

@@ -20,4 +20,14 @@ class ApplicationController < ActionController::Base
   def user_signed_id?
     !current_user.nil?
   end
+
+  def location_info
+    @action = "#{controller_name}/#{action_name}"
+    @breadcrumbs = []
+    @base_url = request.base_url
+  end
+
+  def add_crumb(url, label)
+    @breadcrumbs << { url: url, label: label }
+  end
 end

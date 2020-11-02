@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_29_115703) do
+ActiveRecord::Schema.define(version: 2020_11_02_152014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,16 +24,31 @@ ActiveRecord::Schema.define(version: 2020_10_29_115703) do
     t.datetime "invalidated_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["flow_id"], name: "index_executions_on_flow_id"
+    t.index ["user_id"], name: "index_executions_on_user_id"
   end
 
   create_table "flows", force: :cascade do |t|
     t.bigint "user_id"
     t.string "identifier"
     t.string "title"
+    t.string "brief"
+    t.string "picture"
     t.text "descriptor"
     t.boolean "public", default: false, null: false
+    t.boolean "copyable", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_flows_on_user_id"
+  end
+
+  create_table "media_files", force: :cascade do |t|
+    t.string "identifier"
+    t.string "content_type"
+    t.bigint "flow_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["flow_id"], name: "index_media_files_on_flow_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -47,4 +62,8 @@ ActiveRecord::Schema.define(version: 2020_10_29_115703) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "executions", "flows"
+  add_foreign_key "executions", "users"
+  add_foreign_key "flows", "users"
+  add_foreign_key "media_files", "flows"
 end
