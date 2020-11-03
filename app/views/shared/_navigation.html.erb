@@ -4,12 +4,12 @@
     <% unless @breadcrumbs.count.zero? %>
       <div>
         <% @breadcrumbs.each do |crumb| %>
-        <span>&nbsp;/&nbsp;</span>
-        <% if crumb[:url].nil? %>
-          <span><%= crumb[:label] %></span>
-        <% else %>
-          <a href="<%= crumb[:url] %>"><%= crumb[:label] %></a>
-        <% end %>
+          <span>&nbsp;/&nbsp;</span>
+          <% if crumb[:url].nil? %>
+            <span><%= crumb[:label] %></span>
+          <% else %>
+            <a href="<%= crumb[:url] %>"><%= crumb[:label] %></a>
+          <% end %>
         <% end %>
       </div>
     <% end %>
@@ -17,6 +17,14 @@
 </div>
 <div class="top_navigation">
   <div>
+    <a href="/gallery" class="<%= "-active" if @action == "gallery/list" %>">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M39.2121 16.3376C39.7152 16.122 40.2847 16.122 40.7878 16.3376L63.7106 26.1617C65.3268 26.8543 65.3268 29.1456 63.7106 29.8383L40.7878 39.6623C40.2847 39.8779 39.7152 39.8779 39.2121 39.6623L16.2893 29.8383C14.6731 29.1456 14.6731 26.8543 16.2893 26.1617L39.2121 16.3376Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M24.1987 33.772L16.2893 37.1617C14.6731 37.8544 14.6731 40.1456 16.2893 40.8383L39.2121 50.6623C39.7152 50.878 40.2847 50.878 40.7878 50.6623L63.7106 40.8383C65.3268 40.1456 65.3268 37.8544 63.7106 37.1617L55.8013 33.772" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M24.1987 44.772L16.2893 48.1617C14.6731 48.8544 14.6731 51.1456 16.2893 51.8383L39.2121 61.6623C39.7152 61.878 40.2847 61.878 40.7878 61.6623L63.7106 51.8383C65.3268 51.1456 65.3268 48.8544 63.7106 48.1617L55.8013 44.772" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div>gallery</div>
+    </a>
     <% if @current_user.nil? %>
       <% unless @action == "account/sign_in_form" %>
         <a href="/sign_in" class="<%= "-active" if @action == "account/sign_in_form" %>">
@@ -45,15 +53,7 @@
         </svg>
         <div>flows</div>
       </a>
-      <a href="/gallery" class="<%= "-active" if @action == "gallery/list" %>">
-        <svg viewBox="0 0 80 80" fill="none">
-          <path d="M39.2121 16.3376C39.7152 16.122 40.2847 16.122 40.7878 16.3376L63.7106 26.1617C65.3268 26.8543 65.3268 29.1456 63.7106 29.8383L40.7878 39.6623C40.2847 39.8779 39.7152 39.8779 39.2121 39.6623L16.2893 29.8383C14.6731 29.1456 14.6731 26.8543 16.2893 26.1617L39.2121 16.3376Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M24.1987 33.772L16.2893 37.1617C14.6731 37.8544 14.6731 40.1456 16.2893 40.8383L39.2121 50.6623C39.7152 50.878 40.2847 50.878 40.7878 50.6623L63.7106 40.8383C65.3268 40.1456 65.3268 37.8544 63.7106 37.1617L55.8013 33.772" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M24.1987 44.772L16.2893 48.1617C14.6731 48.8544 14.6731 51.1456 16.2893 51.8383L39.2121 61.6623C39.7152 61.878 40.2847 61.878 40.7878 61.6623L63.7106 51.8383C65.3268 51.1456 65.3268 48.8544 63.7106 48.1617L55.8013 44.772" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <div>gallery</div>
-      </a>
-      <a href="/myself">
+      <a href="/myself" class="<%= "-active" if @action == "account/form" %>">
         <svg viewBox="0 0 80 80" fill="none">
           <path d="M68 40C68 55.464 55.464 68 40 68C24.536 68 12 55.464 12 40C12 24.536 24.536 12 40 12C55.464 12 68 24.536 68 40Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M58.3013 61.192C53.3935 65.4341 46.9966 68 40.0004 68C33.0041 68 26.6071 65.434 21.6992 61.1918C23.0685 58.9261 25.1923 57.1319 27.8006 56.1934C35.6862 53.3561 44.3142 53.3561 52.1998 56.1934C54.8082 57.1319 56.9321 58.9262 58.3013 61.192Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />

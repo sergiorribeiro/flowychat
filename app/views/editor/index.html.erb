@@ -1,34 +1,99 @@
 <emitter></emitter>
 <div id="editor">
   <canvas></canvas>
+  <div id="ctl">
+    <div class="exit" data-action="exit">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M68 40C68 55.464 55.464 68 40 68C24.536 68 12 55.464 12 40C12 24.536 24.536 12 40 12C55.464 12 68 24.536 68 40Z" stroke="currentColor" />
+        <path d="M27.9814 44.0915L38.3905 33.6824C39.2691 32.8038 40.6938 32.8038 41.5724 33.6824L51.9814 44.0915" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+    <div class="title"></div>
+    <div class="save" data-action="save">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M53.1716 13.1716C52.4214 12.4214 51.404 12 50.3431 12H16C13.7909 12 12 13.7909 12 16V64C12 66.2091 13.7909 68 16 68H64C66.2091 68 68 66.2091 68 64V29.6569C68 28.596 67.5786 27.5786 66.8284 26.8284L53.1716 13.1716Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M60 68V45C60 44.4477 59.5523 44 59 44H21C20.4477 44 20 44.4477 20 45V68" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M48 12V27C48 27.5523 47.5523 28 47 28H21C20.4477 28 20 27.5523 20 27V12" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+  </div>
 </div>
 <div id="selection">
-  <label>step <span data-role="ordinal"></span></label>
-  <label>title</label>
-  <input data-role="title" type="text" data-action="selection.update.title" />
-  <label>step</label>
-  <textarea data-role="step" data-action="selection.update.step"></textarea>
-  <label>exits <a data-action="selection.add.exit">(add)</a></label>
+  <h2>step #<span data-role="ordinal"></span></h2>
+  <input placeholder="title" data-role="title" type="text" data-action="selection.update.title" />
+  <textarea rows="4" placeholder="step text" data-role="step" data-action="selection.update.step"></textarea>
+  <div class="section_title">
+    <span>exits</span>
+    <div data-action="selection.add.exit">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M61.7637 40H17.7637" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M39.7637 62L39.7637 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+  </div>
   <div data-role="exits"></div>
-  <label>tasks <a data-action="selection.add.task">(add)</a></label>
+  <div class="section_title">
+    <span>tasks</span>
+    <div data-action="selection.add.task">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M61.7637 40H17.7637" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M39.7637 62L39.7637 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+  </div>
   <div data-role="tasks"></div>
-  <button data-action="selection.delete">delete</button>
+  <div class="text_align_center">
+    <div class="confirmation">
+      <div data-confirmation="show">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M65 20H15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div data-confirmation="hide">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M55.5564 55.6693L24.4437 24.5566" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M24.4437 55.6693L55.5564 24.5566" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div data-confirmation="action" data-action="selection.delete">
+        <svg viewBox="0 0 80 80" fill="none">
+          <path d="M25.2307 40.1819L33.6693 48.7006C34.4467 49.4853 35.707 49.4853 36.4844 48.7006L54.7692 30.2424" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M68 40C68 55.464 55.464 68 40 68C24.536 68 12 55.464 12 40C12 24.536 24.536 12 40 12C55.464 12 68 24.536 68 40Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="blockpane">
+  <div class="info">
+    <div><span>flowy<strong>chat</strong></div>
+    <div class="message"></div>
+  </div>
 </div>
 <div style="display: none">
-  <div data-nlevel="root" data-structure="task">
-    <label>from</label>
-    <select data-role="from"></select>
-    <label>task</label>
-    <input data-role="label" type="text"/>
-    <button data-role="delete">delete</button>
+  <div class="entry_row" data-nlevel="root" data-structure="task">
+    <div><select data-role="from"></select></div>
+    <div class="expandable"><input data-role="label" type="text" placeholder="task"/></div>
+    <div data-role="delete">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M65 20H15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
   </div>
-  <div data-nlevel="root" data-structure="exit">
-    <label>from</label>
-    <select data-role="from"></select>
-    <label>exit label</label>
-    <input data-role="label" type="text"/>
-    <label>to</label>
-    <select data-role="to"></select>
-    <button data-role="delete">delete</button>
+  <div class="entry_row" data-nlevel="root" data-structure="exit">
+    <div><select data-role="from"></select></div>
+    <div class="expandable"><input data-role="label" type="text" placeholder="exit answer"/></div>
+    <div><select data-role="to"></select></div>
+    <div data-role="delete">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M65 20H15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
   </div>
 </div>

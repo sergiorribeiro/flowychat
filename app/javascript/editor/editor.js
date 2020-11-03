@@ -3,6 +3,7 @@ export default function FlowEd() {
 
   self.init = function(engine, canvas, emitter, fps) {
     self.refs = {
+      canvas: document.querySelector("canvas"),
       emitter: document.querySelector("emitter"),
       selection: document.querySelector("#selection"),
       selection_exits: document.querySelector("#selection [data-role='exits']"),
@@ -11,7 +12,11 @@ export default function FlowEd() {
       selection_add_exit: document.querySelectorAll("[data-action='selection.add.exit']"),
       selection_update_title: document.querySelector("[data-action='selection.update.title']"),
       selection_update_step: document.querySelector("[data-action='selection.update.step']"),
-      selection_delete: document.querySelector("[data-action='selection.delete']")
+      selection_delete: document.querySelector("[data-action='selection.delete']"),
+      save: document.querySelector("[data-action='save']"),
+      exit: document.querySelector("[data-action='exit']"),
+      title: document.querySelector("#ctl .title"),
+      blockpane: document.querySelector("#blockpane")
     }
 
     rigActions();
@@ -21,10 +26,23 @@ export default function FlowEd() {
     loadDescriptor();
   }
 
+  function block(message) {
+    self.refs.blockpane.querySelector(".message").innerText = message;
+    self.refs.blockpane.classList.add("-blocking");
+  }
+
+  function unblock(callback) {
+    setTimeout(() => {
+      self.refs.blockpane.classList.remove("-blocking");
+      callback();
+    },1000);
+  }
+
   self.save = function() {
+    block("saving flow...");
     const descriptor = self.fng.engine.export();
     api("put", "/api/flows/:id", descriptor, "text/plain; charset=utf-8", function() {
-      alert("shit is saved!");
+      unblock();
     });
   }
 
@@ -43,8 +61,13 @@ export default function FlowEd() {
   }
 
   function loadDescriptor() {
+    block("loading flow...");
     api("get", "/api/flows/:id", null, null, function(flow_data) {
+      self.refs.title.innerText = flow_data.title;
       self.fng.engine.import(flow_data.descriptor);
+      unblock(() => {
+        self.refs.canvas.classList.add("-loaded");
+      });
     });
   }
 
@@ -89,6 +112,14 @@ export default function FlowEd() {
     self.refs.selection_delete.addEventListener("click", function() {
       self.fng.engine.removeStep(self.fng.engine.selectedStep().id);
     });
+
+    self.refs.save.addEventListener("click", function() {
+      self.save();
+    });
+
+    self.refs.exit.addEventListener("click", function() {
+      location.href="/flows";
+    });
   }
 
   function getStructure(structure, datas, values) {
@@ -115,7 +146,7 @@ export default function FlowEd() {
             const nroot = getNRoot(this).dataset;
             self.fng.engine.updateTask(nroot.step, nroot.task, {label: this.value});
           });
-          dup.querySelector("button[data-role='delete']").addEventListener("click", function() {
+          dup.querySelector("[data-role='delete']").addEventListener("click", function() {
             const nroot = getNRoot(this);
             self.fng.engine.removeTask(nroot.dataset.step, nroot.dataset.task);
             nroot.remove();
@@ -158,10 +189,10 @@ export default function FlowEd() {
             const nroot = getNRoot(this).dataset;
             self.fng.engine.updateExit(nroot.step, nroot.exit, {label: this.value});
           });
-          dup.querySelector("button[data-role='delete']").addEventListener("click", function() {
+          dup.querySelector("[data-role='delete']").addEventListener("click", function() {
             const nroot = getNRoot(this).dataset;
-            self.fng.engine.removeExit(nroot.dataset.step, nroot.dataset.exit);
-            nroot.remove();
+            self.fng.engine.removeExit(nroot.step, nroot.exit);
+            getNRoot(this).remove();
           });
           dup.addEventListener("mouseenter", function(){
             self.fng.engine.signal("highlight_exit", {
@@ -175,10 +206,10 @@ export default function FlowEd() {
           fromSelect.innerHTML = "";
           toSelect.innerHTML = "";
           let allOption = document.createElement("option");
-          allOption.innerText = "*) Anywhere";
+          allOption.innerText = "*) from anywhere";
           fromSelect.appendChild(allOption);
           let noneOption = document.createElement("option");
-          noneOption.innerText = "x) Nowhere";
+          noneOption.innerText = "x) to nowhere";
           toSelect.appendChild(noneOption);
           self.fng.engine.activeSteps(true).forEach(function(step) {
             let option = document.createElement("option");

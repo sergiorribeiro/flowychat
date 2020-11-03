@@ -53,7 +53,7 @@
         </svg>
         <div>execute</div>
       </a>
-      <% if type == :gallery && flow.copyable? %>
+      <% if type == :gallery && flow.copyable? && !@current_user.nil? %>
         <a href="/flows/<%= flow.identifier %>/copy">
           <svg viewBox="0 0 80 80" fill="none">
             <path d="M41.73 25.9629C42.4703 25.2671 43.4494 24.8778 44.4689 24.8777L57.9995 24.8762C60.2089 24.876 62 26.6669 62 28.8762L62 62.8761C62 65.0853 60.2091 66.8761 58 66.8761H34C31.7909 66.8761 30 65.0853 30 62.8761V39.4459C30 38.4291 30.3871 37.4521 31.0801 36.712" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />

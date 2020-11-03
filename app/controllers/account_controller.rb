@@ -7,10 +7,12 @@ class AccountController < ApplicationController
 
   def sign_up_form;  end
 
-  def form;  end
+  def form
+    add_crumb(nil, "myself")
+  end
 
   def update
-    service_result = ::Account::Update.new(myself_params).call
+    service_result = ::Account::Update.new(myself_params, current_user).call
     unless service_result.ok?
       render "/form", notice: service_result.get
     else
@@ -49,5 +51,9 @@ class AccountController < ApplicationController
 
   def sign_in_params
     params.permit(:email, :password)
+  end
+
+  def myself_params
+    params.permit(:display_name, :current_password, :new_password, :new_password_repeat)
   end
 end

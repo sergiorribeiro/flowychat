@@ -21,7 +21,7 @@ class Api::ExecutionsController < ApiController
         {
           identifier: @execution.identifier,
           path: execution_report[:path],
-          completed: execution_report[:completed]
+          complete: execution_report[:completed]
         }
       ).call
 

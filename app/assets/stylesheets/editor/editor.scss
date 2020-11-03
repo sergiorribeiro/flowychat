@@ -7,6 +7,77 @@
     @include fill-all(absolute);
     height: 100%;
     width: 100%;
+    opacity: 0;
+    transition: opacity $TRANSITION_TIMING ease-in-out;
+
+    &.-loaded {
+      opacity: 1;
+    }
+  }
+}
+
+#ctl {
+  display: inline-flex;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: rgba(255,255,255,0.4);
+  position: fixed;
+  top: 5px;
+  left: 5px;
+  align-items: center;
+
+  .exit {
+    cursor: pointer;
+    margin-right: 10px;
+    width: 45px;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+      transition: transform $TRANSITION_TIMING ease-in-out;
+
+      path {
+        stroke-width: 2;
+        transition: all $TRANSITION_TIMING ease-in-out;
+      }
+    }
+
+    &:hover {
+      svg {
+        transform: translateX(-2px) rotate(-90deg);
+        path {
+          stroke-width: 3;
+        }
+      }
+    }
+  }
+
+  .save {
+    cursor: pointer;
+    margin-left: 10px;
+    width: 25px;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      transition: transform $TRANSITION_TIMING ease-in-out;
+
+      path {
+        stroke-width: 2;
+        transition: all $TRANSITION_TIMING ease-in-out;
+      }
+    }
+
+    &:hover {
+      svg {
+        transform: scale(1.05);
+
+        path {
+          stroke-width: 3;
+        }
+      }
+    }
   }
 }
 
@@ -15,14 +86,89 @@
   left: unset;
   width: 25%;
   min-width: 400px;
-  background-color: red;
+  background-color: $ACCENT_HIGHLIGHT;
   overflow-y: auto;
-  transition: transform 350ms cubic-bezier(0.83, 0, 0.17, 1);
+  transition: all $TRANSITION_TIMING ease-in-out;
   transform: translateX(100%);
   pointer-events: none;
+  padding: 20px;
 
   &.-active {
     transform: translateX(0%);
+    pointer-events: all;
+    box-shadow: 0px 0px 10px 3px $SHADOW;
+  }
+
+  h2 {
+    margin-top: 0px;
+  }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+  }
+
+  input[type="text"], select {
+    height: 26px;
+  }
+
+  .entry_row {
+    display: flex;
+    margin-bottom: 5px;
+    align-items: center;
+
+    &>div {
+      padding-left: 1px;
+      padding-right: 1px;
+      flex-grow: 0;
+
+      &.expandable {
+        flex-grow: 1;
+        flex-shrink: 1;
+      }
+
+      svg {
+        width: 25px;
+        height: 100%;
+      }
+    }
+  }
+
+  .section_title {
+    display: inline-flex;
+
+
+    svg {
+      width: 20px;
+      height: 100%;
+    }
+  }
+}
+
+#blockpane {
+  @include fill-all(fixed);
+  z-index: 1000;
+  background-color: rgba(255,255,255,0.85);
+  opacity: 0;
+  transition: opacity $TRANSITION_TIMING ease-in-out;
+  pointer-events: none;
+
+  .info {
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5em;
+    text-align: center;
+
+    .message {
+      font-size: 0.5em;
+    }
+  }
+
+  &.-blocking {
+    opacity: 1;
     pointer-events: all;
   }
 }

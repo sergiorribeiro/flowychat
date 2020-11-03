@@ -1,16 +1,21 @@
-<%= form_with(url: "/myself/update", method: :post, local: true) do |form| %>
-  <%= form.label :display_name %>
-  <%= form.text_field :display_name, value: @current_user.display_name %>
+<div class="container">
+  <h1>Myself</h1>
+  <%= form_with(url: "/myself/update", method: :post, local: true) do |form| %>
+    <%= form.label :display_name, "Display name" %>
+    <%= form.text_field :display_name, value: @current_user.display_name %>
 
-  <%= form.label :current_password %>
-  <%= form.text_field :current_password %>
+    <hr/>
 
-  <%= form.label :new_password %>
-  <%= form.text_field :new_password %>
+    <%= form.label :current_password, "Current password" %>
+    <%= form.password_field :current_password %>
 
-  <%= form.label :new_password_repeat %>
-  <%= form.text_field :new_password_repeat %>
+    <%= form.label :new_password, "New password" %>
+    <%= form.password_field :new_password %>
 
-  <%= link_to "Cancel", "/flows" %>
-  <%= form.submit "Update" %>
-<% end %>
+    <%= form.label :new_password_repeat, "New password, again" %>
+    <%= form.password_field :new_password_repeat %>
+
+    <%= link_to "Cancel", "/flows" %>
+    <%= form.submit "Update", class: "button" %>
+  <% end %>
+</div>
