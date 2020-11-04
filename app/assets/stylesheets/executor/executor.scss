@@ -8,6 +8,9 @@ body {
 .flow {
   display: flex;
   flex-direction: column;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 
   .chat {
       flex-grow: 1;
@@ -104,4 +107,26 @@ me {
 code {
   padding: 5px;
   background-color: rgba(0,0,0,.15);
+}
+
+.credit {
+  margin-top: 45px;
+  font-size: 0.8em;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  flex-direction: column;
+  color: transparentize($color: $BLACK, $amount: 0.5);
+  justify-content: center;
+  align-items: center;
+
+  a {
+    font-size: 1.3em;
+    text-decoration: none;
+    color: $BLACK;
+
+    span {
+      font-weight: 100;      
+    }
+  }
 }

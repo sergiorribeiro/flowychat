@@ -9,4 +9,8 @@ class Flow < ApplicationRecord
       descriptor: descriptor,
     }
   end
+
+  def copies
+    Flow.where(copied_from: id)
+  end
 end

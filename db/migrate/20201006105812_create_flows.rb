@@ -9,6 +9,7 @@ class CreateFlows < ActiveRecord::Migration[6.0]
       t.text :descriptor
       t.boolean :public, null: false, default: false
       t.boolean :copyable, null: false, default: false
+      t.bigint :copied_from
 
       t.timestamps
     end

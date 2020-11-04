@@ -38,6 +38,16 @@ class FlowsController < ApplicationController
     end
   end
 
+  def copy
+    #TODO: Check permissions
+    service_result = ::Flowchart::Copy.new(create_flow_params, current_user).call
+    unless service_result.ok?
+      render "/gallery", notice: service_result.get
+    else
+      redirect_to "/flows"
+    end
+  end
+
   def delete
     #TODO: Check permissions
     ::Flowchart::Delete.new(delete_flow_params, current_user).call

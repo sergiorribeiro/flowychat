@@ -81,8 +81,9 @@ export default class ExecNg {
       };
       ctl.nodes.push(newNode);
 
-      if(currentNode.tasks){
-        currentNode.tasks.forEach(t => {
+      if(nextNode.tasks){
+        let tasks = nextNode.tasks.filter(x => { return (x.from === null) || (x.from === this._currentNode.id); });
+        tasks.forEach(t => {
           ctl.checklist.push(t);
         });
       }

@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   get "/flows/:identifier/edit" => "flows#edit"
   post "/flows/:identifier/update" => "flows#update"
   get "/flows/:identifier/delete" => "flows#delete"
+  get "/flows/:identifier/copy" => "flows#copy"
   ##########################################
   get "/gallery" => "gallery#list"
   ##########################################

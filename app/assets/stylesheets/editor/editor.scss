@@ -144,6 +144,46 @@
       height: 100%;
     }
   }
+
+  [data-role="delete"],
+  [data-action="selection.add.exit"],
+  [data-action="selection.add.task"] {
+    cursor: pointer;
+
+    svg {
+      transition: all $TRANSITION_TIMING ease-in-out;
+
+      path {
+        stroke-width: 2;
+        transition: all $TRANSITION_TIMING ease-in-out;
+      }
+    }
+
+    &:hover {
+      svg {
+        transform: scale(1.05);
+  
+        path {
+          stroke-width: 3;
+        }
+      }
+    }
+  }
+
+  .step_id {
+    display: flex;
+
+    h2 {
+      flex-shrink: 0;
+      flex-grow: 1;
+      margin-right: 8px;
+    }
+
+    .confirmation {
+      flex-shrink: 0;
+      flex-grow: 0;
+    }
+  }
 }
 
 #blockpane {

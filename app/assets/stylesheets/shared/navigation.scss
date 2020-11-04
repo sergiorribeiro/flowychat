@@ -48,6 +48,7 @@
       text-decoration: none;
       color: $BLACK;
       padding: 3px 12px;
+      text-align: center;
   
       &:hover, &.-active {
         div {
@@ -68,6 +69,8 @@
       }
 
       svg {    
+        height: 28px;
+
         path {
           stroke: $ACCENT_CONTRAST;
           stroke-width: 2;

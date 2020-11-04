@@ -101,6 +101,29 @@ body {
             width: 20px;
             height: 20px;
             margin-left: 4px;
+
+            path {
+              stroke-width: 2;
+              transition: all $TRANSITION_TIMING ease-in-out;
+            }
+          }
+
+          &:hover {
+            svg {
+              transform: scale(1.05);
+
+              path {
+                stroke-width: 3;
+              }
+            }
+          }
+        }
+
+        .confirmation {
+          svg {
+            width: 30px;
+            height: 30px;
+            margin-left: 0;
           }
         }
       }

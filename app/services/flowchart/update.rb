@@ -3,10 +3,11 @@ module Flowchart
     def initialize(params, user)
       @identifier = params.fetch(:identifier, nil)
       @title = params.fetch(:title, nil)
+      @brief = params.fetch(:brief, nil)
       @descriptor = params.fetch(:descriptor, nil)
       @picture = params.fetch(:picture, nil)
-      @public = params.fetch(:public, false)
-      @copyable = params.fetch(:copyable, false)
+      @public = params.fetch(:public, nil)
+      @copyable = params.fetch(:copyable, nil)
       @user = user
     end
 
@@ -15,8 +16,8 @@ module Flowchart
       @flow.title = @title unless @title.nil?
       @flow.brief = @brief unless @brief.nil?
       @flow.descriptor = @descriptor unless @descriptor.nil?
-      @flow.public = @public
-      @flow.copyable = @copyable
+      @flow.public = @public unless @public.nil?
+      @flow.copyable = @copyable unless @copyable.nil?
       @flow.picture = saved_file_identifier unless @picture.nil?
       @flow.save
       ok!(@flow)

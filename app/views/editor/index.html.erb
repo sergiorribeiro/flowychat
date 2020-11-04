@@ -19,30 +19,8 @@
   </div>
 </div>
 <div id="selection">
-  <h2>step #<span data-role="ordinal"></span></h2>
-  <input placeholder="title" data-role="title" type="text" data-action="selection.update.title" />
-  <textarea rows="4" placeholder="step text" data-role="step" data-action="selection.update.step"></textarea>
-  <div class="section_title">
-    <span>exits</span>
-    <div data-action="selection.add.exit">
-      <svg viewBox="0 0 80 80" fill="none">
-        <path d="M61.7637 40H17.7637" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M39.7637 62L39.7637 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </div>
-  </div>
-  <div data-role="exits"></div>
-  <div class="section_title">
-    <span>tasks</span>
-    <div data-action="selection.add.task">
-      <svg viewBox="0 0 80 80" fill="none">
-        <path d="M61.7637 40H17.7637" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M39.7637 62L39.7637 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </div>
-  </div>
-  <div data-role="tasks"></div>
-  <div class="text_align_center">
+  <div class="step_id">
+    <h2>step #<span data-role="ordinal"></span></h2>
     <div class="confirmation">
       <div data-confirmation="show">
         <svg viewBox="0 0 80 80" fill="none">
@@ -65,6 +43,28 @@
       </div>
     </div>
   </div>
+  <input placeholder="title" data-role="title" type="text" data-action="selection.update.title" />
+  <textarea rows="4" placeholder="step text" data-role="step" data-action="selection.update.step"></textarea>
+  <div class="section_title">
+    <span>exits</span>
+    <div data-action="selection.add.exit">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M61.7637 40H17.7637" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M39.7637 62L39.7637 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+  </div>
+  <div data-role="exits"></div>
+  <div class="section_title">
+    <span>tasks</span>
+    <div data-action="selection.add.task">
+      <svg viewBox="0 0 80 80" fill="none">
+        <path d="M61.7637 40H17.7637" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M39.7637 62L39.7637 18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+  </div>
+  <div data-role="tasks"></div>
 </div>
 <div id="blockpane">
   <div class="info">

@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 2020_11_02_152014) do
     t.text "descriptor"
     t.boolean "public", default: false, null: false
     t.boolean "copyable", default: false, null: false
+    t.bigint "copied_from"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_flows_on_user_id"

@@ -7,7 +7,7 @@
   <% end %>
   <% unless flow.picture.nil? %>
   <div class="image">
-    <img src="media/<%= flow.picture %>/inline_image"/>
+    <img src="/media/<%= flow.picture %>/inline_image"/>
   </div>
   <% else %>
     <div class="image_placeholder"></div>
@@ -23,8 +23,10 @@
         <div><strong>by:</strong>&nbsp;<%= flow.user.display_name %></div>
         <% if type == :gallery %>
         <div><strong>executions:</strong>&nbsp;<%= flow.executions.count %></div>
+        <div><strong>copies:</strong>&nbsp;<%= flow.copies.count %></div>
         <% else %>
         <div><strong>executions:</strong>&nbsp;<%= flow.executions.where(complete: true).count %>&nbsp;/&nbsp;<%= flow.executions.count %></div>
+        <div><strong>copies:</strong>&nbsp;<%= flow.copies.count %></div>
         <% end %>
       </div>
     </div>
@@ -47,7 +49,7 @@
           <div>design</div>
         </a>
       <% end %>
-      <a href="/flows/<%= flow.identifier %>/execute">
+      <a href="/flows/<%= flow.identifier %>/execute" target="_blank">
         <svg viewBox="0 0 80 80" fill="none">
           <path d="M57.9611 38.2635C59.3048 39.0313 59.3048 40.9687 57.9611 41.7365L21.9923 62.2901C20.659 63.052 19 62.0893 19 60.5537L19 19.4464C19 17.9107 20.659 16.948 21.9923 17.7099L57.9611 38.2635Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
@@ -64,14 +66,27 @@
         </a>
       <% end %>
       <% if type == :collection %>
-        <a href="/flows/<%= flow.identifier %>/delete">
-          <svg viewBox="0 0 80 80" fill="none">
-            <path d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M65 20H15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          <div>delete</div>
-        </a>
+        <div class="confirmation">
+          <div data-confirmation="show">
+            <svg viewBox="0 0 80 80" fill="none">
+              <path d="M61 20L56.3735 64.4144C56.1612 66.4521 54.4437 68 52.395 68H27.605C25.5563 68 23.8388 66.4521 23.6265 64.4144L19 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M65 20H15" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M27.8555 19.9986L33.926 12.3865H46.0747L52.1452 19.9986" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div data-confirmation="hide">
+            <svg viewBox="0 0 80 80" fill="none">
+              <path d="M55.5564 55.6693L24.4437 24.5566" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M24.4437 55.6693L55.5564 24.5566" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <a href="/flows/<%= flow.identifier %>/delete" data-confirmation="action">
+            <svg viewBox="0 0 80 80" fill="none">
+              <path d="M25.2307 40.1819L33.6693 48.7006C34.4467 49.4853 35.707 49.4853 36.4844 48.7006L54.7692 30.2424" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M68 40C68 55.464 55.464 68 40 68C24.536 68 12 55.464 12 40C12 24.536 24.536 12 40 12C55.464 12 68 24.536 68 40Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </a>
+        </div>
       <% end %>
     </div>
   </div>

@@ -8,12 +8,14 @@
   <%= form.label :picture %>
   <%= form.file_field :picture %>
 
-  <%= form.label :public %>
+  <div class="label">Public?</div>
   <%= form.check_box :public, checked: flow&.public? %>
+  <label for="public"></label>
 
-  <%= form.label :copyable %>
+  <div class="label">Copyable?</div>
   <%= form.check_box :copyable, checked: flow&.copyable? %>
+  <label for="copyable"></label>
 
-  <%= link_to "Cancel", flows_path %>
-  <%= form.submit flow.nil? ? "Create" : "Update" %>
+  <%= link_to "Cancel", flows_path, class: "button -stripped" %>
+  <%= form.submit flow.nil? ? "Create" : "Update", class:"button" %>
 <% end %>
