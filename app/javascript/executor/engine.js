@@ -10,9 +10,21 @@ export default class ExecNg {
     };
 
     this.startNode = () => {
-      // this must be revised. determine which should be the start node
-      const step = this._flowData.steps[0];
+      let steps = this._flowData.steps.filter(s => {
+        let has_exits = s.exits.filter(x => { return x.to; }).length > 0;
+        let is_exit_target = this._flowData.steps.filter( ss => {
+          return ss.exits.filter( ss_x => {
+            return ss_x.to && ss_x.to !== "" && ss_x.to === s.uid;
+          }).length > 0;
+        }).length > 0;
 
+        return has_exits && !is_exit_target;
+      });
+
+      if(steps.length === 0)
+        return null;
+
+      const step = steps[0];
       return {
         id: step.uid,
         path: [],

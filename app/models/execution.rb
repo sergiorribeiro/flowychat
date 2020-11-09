@@ -9,4 +9,6 @@ class Execution < ApplicationRecord
       complete: complete?,
     }
   end
+
+  scope :active, -> { where(invalidated_at: nil) }
 end

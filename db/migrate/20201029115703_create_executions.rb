@@ -6,6 +6,7 @@ class CreateExecutions < ActiveRecord::Migration[6.0]
       t.bigint :user_id
       t.text :path, null:false, default: ""
       t.boolean :complete, null: false, default: false
+      t.boolean :started, null: false, default: false
       t.datetime :invalidated_at
 
       t.timestamps

@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 2020_11_02_152014) do
     t.bigint "user_id"
     t.text "path", default: "", null: false
     t.boolean "complete", default: false, null: false
+    t.boolean "started", default: false, null: false
     t.datetime "invalidated_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

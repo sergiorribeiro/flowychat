@@ -5,7 +5,10 @@ class ExecutorController < ApplicationController
   def index
     @flow_id = execution_params.fetch(:identifier, nil)
 
-    flow_permissions = ::Access::FlowPermissions.new(flow, current_user).call.get
+    permission_service = ::Access::FlowPermissions.new(flow, current_user).call
+    return render json: {}, status: 401 unless permission_service.ok?
+
+    flow_permissions = permission_service.get
 
     @execution_id = if flow_permissions[:can_execute]
       service = ::FlowExecution::Create.new(flow.id, current_user).call
@@ -42,6 +45,6 @@ class ExecutorController < ApplicationController
   end
 
   def execution
-    @execution ||= Execution.find_by(identifier: @execution_id)
+    @execution ||= Execution.active.find_by(identifier: @execution_id)
   end
 end

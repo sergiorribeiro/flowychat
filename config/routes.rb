@@ -31,6 +31,7 @@ Rails.application.routes.draw do
   get "/flows/:identifier/editor" => "editor#index"
   ##########################################
   get "/flows/:identifier/execute" => "executor#index"
+  get "/f/:identifier" => "executor#index"
   get "/x/:identifier" => "executor#resume"
   ##########################################
   get "/media/:id/inline_image" => "media#inline_image"

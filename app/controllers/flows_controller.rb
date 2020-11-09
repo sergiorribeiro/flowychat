@@ -2,7 +2,7 @@ class FlowsController < ApplicationController
   before_action :location_info
   before_action :user_from_cookie
   before_action :redirect_if_not_in_session
-  before_action :set_flow_by_identifier, only: [:edit, :update, :delete]
+  before_action :set_flow_by_identifier, only: [:edit, :update, :delete, :copy]
 
   def list
     add_crumb(nil, "flows")
@@ -29,29 +29,53 @@ class FlowsController < ApplicationController
   end
 
   def update
-    #TODO: Check permissions
-    service_result = ::Flowchart::Update.new(create_flow_params, current_user).call
-    unless service_result.ok?
-      render "/flows/edit", notice: service_result.get
+    permission_service = ::Access::FlowPermissions.new(@flow, current_user).call
+    return render json: {}, status: 401 unless permission_service.ok?
+
+    flow_permissions = permission_service.get
+
+    if flow_permissions[:can_edit]
+      service_result = ::Flowchart::Update.new(create_flow_params, current_user).call
+      unless service_result.ok?
+        render "/flows/edit", notice: service_result.get
+      else
+        redirect_to "/flows"
+      end
     else
-      redirect_to "/flows"
+      render json: {}, status: 401
     end
   end
 
   def copy
-    #TODO: Check permissions
-    service_result = ::Flowchart::Copy.new(create_flow_params, current_user).call
-    unless service_result.ok?
-      render "/gallery", notice: service_result.get
+    permission_service = ::Access::FlowPermissions.new(@flow, current_user).call
+    return render json: {}, status: 401 unless permission_service.ok?
+
+    flow_permissions = permission_service.get
+
+    if flow_permissions[:can_copy]
+      service_result = ::Flowchart::Copy.new(create_flow_params, current_user).call
+      unless service_result.ok?
+        render "/gallery", notice: service_result.get
+      else
+        redirect_to "/flows"
+      end
     else
-      redirect_to "/flows"
+      render json: {}, status: 401
     end
   end
 
   def delete
-    #TODO: Check permissions
-    ::Flowchart::Delete.new(delete_flow_params, current_user).call
-    redirect_to "/flows"
+    permission_service = ::Access::FlowPermissions.new(@flow, current_user).call
+    return render json: {}, status: 401 unless permission_service.ok?
+
+    flow_permissions = permission_service.get
+
+    if flow_permissions[:can_delete]
+      ::Flowchart::Delete.new(delete_flow_params, current_user).call
+      redirect_to "/flows"
+    else
+      render json: {}, status: 401
+    end
   end
 
   private

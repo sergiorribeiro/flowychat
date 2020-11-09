@@ -17,15 +17,27 @@
       <h2><%= flow.title %></h2>
       <div><%= flow.brief %></div>
       <div class="permalink">
-        <strong>permalink:</strong>&nbsp;<code><%= @base_url %>/x/<%= flow.identifier %></code>
+        <strong>permalink:</strong>&nbsp;<code><%= @base_url %>/f/<%= flow.identifier %></code>
       </div>
       <div class="stats">
         <div><strong>by:</strong>&nbsp;<%= flow.user.display_name %></div>
         <% if type == :gallery %>
-        <div><strong>executions:</strong>&nbsp;<%= flow.executions.count %></div>
+        <div>
+          <strong>executions:</strong>&nbsp;
+          <span title="displayed <%= flow.display_count %> time(s)"><%= flow.display_count %></span>
+          <span>&nbsp;/&nbsp;</span>
+          <span title="<%= flow.under_execution_count %> under execution"><%= flow.under_execution_count %></span>
+        </div>
         <div><strong>copies:</strong>&nbsp;<%= flow.copies.count %></div>
         <% else %>
-        <div><strong>executions:</strong>&nbsp;<%= flow.executions.where(complete: true).count %>&nbsp;/&nbsp;<%= flow.executions.count %></div>
+        <div>
+          <strong>executions:</strong>&nbsp;
+          <span title="displayed <%= flow.display_count %> time(s)"><%= flow.display_count %></span>
+          <span>&nbsp;/&nbsp;</span>
+          <span title="<%= flow.under_execution_count %> under execution"><%= flow.under_execution_count %></span>
+          <span>&nbsp;/&nbsp;</span>
+          <span title="completed <%= flow.complete_executions %> time(s)"><%= flow.complete_executions %></span>
+        </div>
         <div><strong>copies:</strong>&nbsp;<%= flow.copies.count %></div>
         <% end %>
       </div>
@@ -40,7 +52,7 @@
           </svg>
           <div>edit</div>
         </a>
-        <a href="/flows/<%= flow.identifier %>/editor">
+        <a data-turbolinks="true" href="/flows/<%= flow.identifier %>/editor">
           <svg viewBox="0 0 80 80" fill="none">
             <path d="M34.9282 60H47.5C52.1944 60 56 56.1944 56 51.5C56 46.8056 52.1944 43 47.5 43H27.5C21.1487 43 16 37.8513 16 31.5C16 25.1487 21.1487 20 27.5 20H49.0718" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M24.5359 66C26.6795 67.2376 29.3205 67.2376 31.4641 66C33.6077 64.7624 34.9282 62.4752 34.9282 60C34.9282 57.5248 33.6077 55.2376 31.4641 54C29.3205 52.7624 26.6795 52.7624 24.5359 54C22.3923 55.2376 21.0718 57.5248 21.0718 60C21.0718 62.4752 22.3923 64.7624 24.5359 66Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
@@ -49,7 +61,7 @@
           <div>design</div>
         </a>
       <% end %>
-      <a href="/flows/<%= flow.identifier %>/execute" target="_blank">
+      <a data-turbolinks="false" href="/flows/<%= flow.identifier %>/execute" target="_blank">
         <svg viewBox="0 0 80 80" fill="none">
           <path d="M57.9611 38.2635C59.3048 39.0313 59.3048 40.9687 57.9611 41.7365L21.9923 62.2901C20.659 63.052 19 62.0893 19 60.5537L19 19.4464C19 17.9107 20.659 16.948 21.9923 17.7099L57.9611 38.2635Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
         </svg>

@@ -3,7 +3,10 @@ class Api::FlowsController < ApiController
   before_action :set_flow_by_identifier, only: [:show, :update]
 
   def show
-    flow_permissions = ::Access::FlowPermissions.new(@flow, current_user).call.get
+    permission_service = ::Access::FlowPermissions.new(@flow, current_user).call
+    return render json: {}, status: 401 unless permission_service.ok?
+
+    flow_permissions = permission_service.get
 
     if flow_permissions[:can_edit]
       render json: @flow.as_api_result
@@ -13,7 +16,10 @@ class Api::FlowsController < ApiController
   end
 
   def update
-    flow_permissions = ::Access::FlowPermissions.new(@flow, current_user).call.get
+    permission_service = ::Access::FlowPermissions.new(@flow, current_user).call
+    return render json: {}, status: 401 unless permission_service.ok?
+
+    flow_permissions = permission_service.get
 
     if flow_permissions[:can_edit]
       descriptor = request.body.read
@@ -27,6 +33,8 @@ class Api::FlowsController < ApiController
       ).call
 
       if service_result.ok?
+        ::FlowExecution::Invalidate.new(@flow.identifier).call
+
         render json: {}, status: 200
       else
         render json: {}, status: 500
