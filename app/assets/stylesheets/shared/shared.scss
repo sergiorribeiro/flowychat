@@ -10,6 +10,11 @@ html, body {
   background: $BG;
 }
 
+.internal {
+  margin: 10px;
+  margin-top: 65px;
+}
+
 .container {
   max-width: 900px;
   margin-left: auto;
@@ -26,6 +31,8 @@ html, body {
   text-decoration: none;
   transition: all $TRANSITION_TIMING ease-in-out;
   align-items: center;
+  cursor: pointer;
+  margin-top: 15px;
 
   div {
     svg {    
@@ -104,6 +111,8 @@ form {
     border: 1px solid $ACCENT;
     box-sizing: border-box;
     margin-bottom: 15px;
+    height: 40px;
+    font-size: 17px;
   }
 
   input[type="checkbox"] {

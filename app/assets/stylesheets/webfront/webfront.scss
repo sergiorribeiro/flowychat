@@ -1,8 +1,8 @@
 @import "shared/shared.scss";
 
 body {
-  margin: 15px;
-  margin-top: 60px;
+  margin: 0;
+  padding: 0;
 }
 
 .list {
@@ -19,7 +19,7 @@ body {
     margin-bottom: 15px;
     overflow: hidden;
 
-    .public_ribbon, .copyable_ribbon {
+    .ribbon {
       position: absolute;
       text-transform: uppercase;
       color: $WHITE;
@@ -27,20 +27,20 @@ body {
       font-size: 0.6em;
       text-align: center;
       transform-origin: center center;
-    }
 
-    .public_ribbon {
-      background-color: $PUBLIC_RIBBON;
-      top: 10px;
-      left: -21px;
-      width: 80px;
-    }
-
-    .copyable_ribbon {
-      background-color: $COPYABLE_RIBBON;
-      top: 23px;
-      left: -25px;
-      width: 110px;
+      &.-public {
+        background-color: $PUBLIC_RIBBON;
+        top: 10px;
+        left: -21px;
+        width: 80px;
+      }
+  
+      &.-copyable {
+        background-color: $COPYABLE_RIBBON;
+        top: 23px;
+        left: -25px;
+        width: 110px;
+      }
     }
 
     .information {
@@ -146,6 +146,105 @@ body {
       width: 30px;
       flex-shrink: 0;
       flex-grow: 0;
+    }
+  }
+}
+
+.webfront {
+  z-index: 100;
+
+  section#home {
+    position: relative;
+    height: 100vh;
+    background-image: url(image_path('homebg.jpg'));
+    background-size: cover;
+    background-position: center center;
+
+    .information {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: $WHITE;
+      font-size: 1em;
+      font-weight: 100;
+      text-align: center;
+
+      .logo {
+        font-size: 3em;
+        margin-bottom: 20px;
+      }
+  
+      .punch {
+        font-size: 1.5em;
+      }
+    }
+  }
+
+  section#features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 20px;
+
+    .feature {
+      width: 30%;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+
+      .information {
+        text-align: center;
+
+        .title {
+          font-size: 1.2em;
+          font-weight: bold;
+          margin-bottom: 6px;
+        }
+
+        .description {
+          text-align: center;
+          line-height: 1.5;
+        }
+      }
+
+      svg {
+        height: 150px;
+        width: auto;
+        margin: auto;
+      }
+    }
+  }
+
+  section#bottom {
+    padding: 10px 20px;
+    background-color: #080f19;
+    color: $WHITE;
+    margin-top: 20px;
+
+    p {
+      text-align: center;
+      font-weight: 100;
+
+      small {
+        font-size: 0.7em;
+        opacity: 0.4;
+      }
+    }
+
+    div {
+      opacity: 0.5;
+      font-size: 0.85em;
+      text-align: center;
+
+      ul {
+        display: inline-block;
+
+        li {
+          text-align: left;
+        }
+      }
     }
   }
 }

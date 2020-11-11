@@ -1,12 +1,14 @@
-<div class="container">
-  <h1>Sign Up</h1>
-  <%= form_with(url: do_sign_up_path, method: :post) do %>
-    <%= label_tag(:display_name, "Display name:") %>
-    <%= text_field_tag(:display_name) %>
-    <%= label_tag(:email, "Email:") %>
-    <%= text_field_tag(:email) %>
-    <%= label_tag(:password, "Password:") %>
-    <%= password_field_tag(:password) %>
-    <%= submit_tag("Signup", class: "button") %>
-  <% end %>
+<div class="internal">
+  <div class="container">
+    <h1>Sign Up</h1>
+    <%= form_with(url: do_sign_up_path, method: :post) do %>
+      <%= label_tag(:display_name, "Display name:") %>
+      <%= text_field_tag(:display_name) %>
+      <%= label_tag(:email, "Email:") %>
+      <%= text_field_tag(:email) %>
+      <%= label_tag(:password, "Password:") %>
+      <%= password_field_tag(:password) %>
+      <%= submit_tag("Signup", class: "button") %>
+    <% end %>
+  </div>
 </div>

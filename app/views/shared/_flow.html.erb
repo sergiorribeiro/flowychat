@@ -1,9 +1,9 @@
 <div class="flow_record">
   <% if flow.public? && type == :collection %>
-    <div class="public_ribbon">public</div>
+    <div class="ribbon -public">public</div>
   <% end %>
   <% if flow.copyable? && type == :collection %>
-    <div class="copyable_ribbon">copyable</div>
+    <div class="ribbon -copyable">copyable</div>
   <% end %>
   <% unless flow.picture.nil? %>
   <div class="image">
