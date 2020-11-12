@@ -11,6 +11,15 @@ class AccountController < ApplicationController
     add_crumb(nil, "myself")
   end
 
+  def activate
+    service_result = ::Account::Activate.new(activate_params).call
+    unless service_result.ok?
+      render json: {}, status: 401
+    else
+      redirect_to "/sign_in"
+    end
+  end
+
   def update
     service_result = ::Account::Update.new(myself_params, current_user).call
     unless service_result.ok?
@@ -35,7 +44,7 @@ class AccountController < ApplicationController
   end
 
   def sign_up
-    service_result = ::Account::SignUp.new(sign_up_params).call
+    service_result = ::Account::SignUp.new(sign_up_params.merge(base_url: request.base_url)).call
     unless service_result.ok?
       redirect_to "/sign_up", notice: service_result.get
     else
@@ -44,6 +53,10 @@ class AccountController < ApplicationController
   end
 
   private
+
+  def activate_params
+    params.permit(:identifier)
+  end
 
   def sign_up_params
     params.permit(:display_name, :email, :password)

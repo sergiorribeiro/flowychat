@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get "/do_sign_out" => "account#sign_out"
   get "/myself" => "account#form"
   post "/myself/update" => "account#update"
+  get "/account/:identifier/activate" => "account#activate"
   ##########################################
   get "/sign_up" => "account#sign_up_form"
   post "/do_sign_up" => "account#sign_up"

@@ -1,4 +1,4 @@
-require "digest/sha1"
+require "securerandom"
 
 module Account
   class SignUp < Service
@@ -6,6 +6,7 @@ module Account
       @display_name = params.fetch(:display_name, nil)
       @email = params.fetch(:email, nil)
       @password = params.fetch(:password, nil)
+      @base_url = params.fetch(:base_url, nil)
     end
 
     def call
@@ -24,23 +25,19 @@ module Account
 
       return nok!("Unable to signup") unless user.errors.count.zero?
 
-      # send email with activation link
+      UserMailer.with(user: user, activation_link: activation_link).confirmation.deliver_now
 
       ok!(user)
     end
 
     private
 
-    def random_sequence
-      "#{rand(4000000000000000000)}#{Time.now.to_i}"
-    end
-
     def activation_token
-      @activation_token ||= Digest::SHA1.hexdigest(random_sequence)
+      @activation_token ||= SecureRandom.alphanumeric(40)
     end
 
     def activation_link
-      # {activation route}_path(activation_token)
+      [@base_url, "account/#{activation_token}/activate"].join("/")
     end
   end
 end

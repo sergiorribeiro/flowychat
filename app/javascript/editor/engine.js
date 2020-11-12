@@ -704,6 +704,19 @@ export default function FlowNg() {
           }
           break;
         case "high":
+          if(flowNgin._data.steps.length === 0){
+            _ctx.save();
+            const empty_notice = "nothing here. double click to add a step";
+            _ctx.fillStyle = "#000";
+            _ctx.globalAlpha = 0.3;
+            _ctx.font = "12px Arial";
+            const notice_width = _ctx.measureText(empty_notice).width;
+            _ctx.fillText(empty_notice,
+              (_ctx.canvas.width / 2) - (notice_width / 2),
+              _ctx.canvas.height / 2
+            );
+            _ctx.restore();
+          }
           break;
       }
     }

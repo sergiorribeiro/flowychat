@@ -221,7 +221,6 @@ body {
     padding: 10px 20px;
     background-color: #080f19;
     color: $WHITE;
-    margin-top: 20px;
 
     p {
       text-align: center;
@@ -244,6 +243,45 @@ body {
         li {
           text-align: left;
         }
+      }
+    }
+  }
+
+  section#executor, section#designer {
+    height: 100vh;
+  }
+
+  .split_info {
+    display: flex;
+    align-items: center;
+
+    .image {
+      width: 60%;
+      height: 100%;
+      background-size: cover;
+      background-position: center center;
+      flex-grow: 1;
+      flex-shrink: 0;
+    }
+
+    .information {
+      flex-grow: 0;
+      margin: 25px;
+    }
+  }
+
+  section#executor {
+    &.split_info {
+      .image {
+        background-image: url(image_path('homebg.jpg'));
+      }
+    }
+  }
+
+  section#designer {
+    &.split_info {
+      .image {
+        background-image: url(image_path('homebg.jpg'));
       }
     }
   }
