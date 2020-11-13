@@ -8,7 +8,9 @@
       <%= text_field_tag(:email) %>
       <%= label_tag(:password, "Password:") %>
       <%= password_field_tag(:password) %>
-      <%= submit_tag("Signup", class: "button") %>
+      <div class="toolbar">
+        <%= submit_tag("Signup", class: "button") %>
+      </div>
     <% end %>
   </div>
 </div>

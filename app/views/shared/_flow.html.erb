@@ -16,9 +16,9 @@
     <div class="description">
       <h2><%= flow.title %></h2>
       <div><%= flow.brief %></div>
-      <div class="permalink">
-        <strong>permalink:</strong>&nbsp;<code><%= @base_url %>/f/<%= flow.identifier %></code>
-      </div>
+      <%# <div class="permalink">
+        <strong>permalink:</strong>&nbsp;<code><%= @base_url % >/f/<%= flow.identifier % ></code>
+      </div> %>
       <div class="stats">
         <div><strong>by:</strong>&nbsp;<%= flow.user.display_name %></div>
         <% if type == :gallery %>

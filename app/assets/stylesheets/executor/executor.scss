@@ -20,6 +20,7 @@ body {
   .checklist{
       flex-shrink: 1;
       flex-grow: 1;
+      display: none;
 
       ul {
           background-color: rgba(0,0,0,.15);
@@ -127,6 +128,32 @@ code {
 
     span {
       font-weight: 100;      
+    }
+  }
+}
+
+.sharing {
+  .sharing_option {
+    code {
+      display: block;
+      padding: 8px;
+
+      pre {
+        margin: 0;
+      }
+    }
+
+    &>div {
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    .options {
+      display: flex;
+      
+      &>div {
+        margin-right: 10px;
+      }
     }
   }
 }

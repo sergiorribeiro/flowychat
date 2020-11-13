@@ -136,7 +136,7 @@ body {
       flex-grow: 0;
 
       img {
-        object-fit: contain;
+        object-fit: cover;
         width: 100%;
         height: 100%;
       }
@@ -186,7 +186,7 @@ body {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
-    padding: 10px 20px;
+    padding: 35px 20px;
 
     .feature {
       width: 30%;
@@ -221,6 +221,13 @@ body {
     padding: 10px 20px;
     background-color: #080f19;
     color: $WHITE;
+    padding-top: 45px;
+
+    .changelog {
+      margin-bottom: 35px;
+      opacity: 0.8;
+      font-size: 0.9em;
+    }
 
     p {
       text-align: center;
@@ -283,6 +290,120 @@ body {
       .image {
         background-image: url(image_path('homebg.jpg'));
       }
+    }
+  }
+}
+
+.button {
+  padding: 8px 14px;
+  border: none;
+  background-color: $ACCENT;
+  border-radius: 12px;
+  box-shadow: 0px 1px 3px -1px $SHADOW;
+  display: inline-flex;
+  text-decoration: none;
+  transition: all $TRANSITION_TIMING ease-in-out;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 15px;
+  text-transform: uppercase;
+  color: $ACCENT_CONTRAST;
+  font-size: 0.9em;
+  line-height: 1;
+
+  &:hover{
+    box-shadow: 0px 2px 4px -1px $SHADOW;
+    color: $ACCENT_HIGHLIGHT;
+  }
+
+  &.-stripped {
+    background-color: transparent;
+    border: none;
+    color: $BLACK;
+  }
+}
+
+.toolbar {
+  display: inline-flex;
+  justify-content: space-around;
+
+  &>* {
+    margin-right: 12px;
+  }
+}
+
+form {
+  label, div.label {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .file {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+
+    img {
+      height: 100%;
+      width: 35px;
+      margin-right: 15px;
+      object-fit: contain;
+    }
+
+    button {
+      margin-right: 15px;
+      margin-top: 0;
+    }
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid $ACCENT;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    height: 40px;
+    font-size: 17px;
+  }
+
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  input[type="checkbox"] + label {
+    position: relative;
+    width: 50px;
+    height: 25px;
+    background: $ACCENT_CONTRAST;
+    margin-bottom: 15px;
+    border-radius: calc(25px / 2);
+    transition: all $FAST_TRANSITION_TIMING ease-in-out;
+
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: $ACCENT_HIGHLIGHT;
+      border-radius: 50%;
+      top: 50%;
+      left: 0%;
+      transform: translateY(-50%);
+      transition: all $FAST_TRANSITION_TIMING ease-in-out;
+    }
+  }
+
+  input[type="checkbox"]:checked + label {
+    background: green;
+
+    &::after {
+      left: 50%;
     }
   }
 }

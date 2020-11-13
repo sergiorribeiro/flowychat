@@ -3,9 +3,53 @@
   <div class="checklist">
     <h1>Your checklist</h1>
     <ul></ul>
-    <h1>Your permalink</h1>
-    <code id="permalink"><%= @permalink %></code>
   </div>
+  <% if !@is_embed || @sharing_options[:flow] || @sharing_options[:execution] || @sharing_options[:embed] %>
+    <div class="sharing">
+      <h1>Sharing options</h1>
+      <% if !@is_embed || @sharing_options[:execution] %>
+        <div class="sharing_option">
+          <div>execution permalink</div>
+          <code><%= @base_url %>/x/<%= @execution_id %></code>
+        </div>
+      <% end %>
+      <% if !@is_embed || @sharing_options[:flow] %>
+        <div class="sharing_option">
+          <div>flow permalink</div>
+          <code><%= @base_url %>/f/<%= @flow_id %></code>
+        </div>
+      <% end %>
+      <% if !@is_embed || @sharing_options[:embed] %>
+        <div class="sharing_option">
+          <div>embed</div>
+          <div class="options">
+            <div>
+              <input 
+                type="checkbox"
+                data-param="flow_permalink"
+              />
+              <span>Flow permalink</span>
+            </div>
+            <div>
+              <input 
+                type="checkbox"
+                data-param="execution_permalink"
+              />
+              <span>Execution permalink</span>
+            </div>
+            <div>
+              <input 
+                type="checkbox"
+                data-param="embed_code"
+              />
+              <span>Embed permalink</span>
+            </div>
+          </div>
+          <code id="embed" data-base="<%= @base_url %>/embed/<%= @flow_id %>"><pre></pre></code>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
   <div class="credit">
     <span>powered by</span>
     <a href="/" target="_blank">

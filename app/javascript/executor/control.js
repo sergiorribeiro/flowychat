@@ -9,6 +9,29 @@ export default function Ctl() {
       executor = new ExecNg(JSON.parse(data.flow_descriptor));
       buildFlow(executor.setPath(data.path));
     });
+
+    document.querySelectorAll(".options input[type='checkbox']").forEach(function(checkbox) {
+      checkbox.addEventListener("change", self.buildEmbedCode)
+    });
+
+    self.buildEmbedCode();
+  }
+
+  self.buildEmbedCode = function() {
+    let embed = document.querySelector("#embed");
+    let base_url = embed.dataset.base;
+    let query = "";
+    document.querySelectorAll(".options input[type='checkbox']").forEach(function(checkbox) {
+      if(checkbox.checked){ query += `&${checkbox.dataset.param}=1`; }
+    });
+    let url = `${base_url}${query === "" ? "" : "?"}${query.substring(1)}`;
+    let code = `<iframe 
+  src="${url}"
+  width="600"
+  height="500"
+  frameborder="0">
+</iframe>`;
+    embed.querySelector("pre").innerText = code;
   }
 
   function api(method, url, body, content_type, callback){

@@ -19,13 +19,28 @@ class ExecutorController < ApplicationController
       nil
     end
 
-    redirect_to "/x/#{@execution_id}"
+    query = ""
+    if request.path.include? "/embed/"
+      query += "&is_embed=1"
+      query += "&flow_permalink=1" if (execution_params[:flow_permalink] || "0") == "1"
+      query += "&execution_permalink=1" if (execution_params[:execution_permalink] || "0") == "1"
+      query += "&embed_permalink=1" if (execution_params[:embed_permalink] || "0") == "1"
+      query = query[1..-1] || ""
+    end
+
+    redirect_to "/x/#{@execution_id}#{query.empty? ? "" : "?"}#{query}"
   end
 
   def resume
     @execution_id = execution_params.fetch(:identifier, nil)
     @flow_id = execution.flow.identifier
-    @permalink = request.original_url
+    @base_url = request.base_url
+    @is_embed = (execution_params[:is_embed] || "0") == "1"
+    @sharing_options = {
+      flow: (execution_params[:flow_permalink] || "0") == "1",
+      execution: (execution_params[:execution_permalink] || "0") == "1",
+      embed: (execution_params[:embed_code] || "0") == "1"
+    }
 
     render :index, layout: "executor"
   end
@@ -37,7 +52,7 @@ class ExecutorController < ApplicationController
   end
 
   def execution_params
-    params.permit(:identifier)
+    params.permit(:identifier, :flow_permalink, :execution_permalink, :embed_code, :is_embed)
   end
 
   def flow

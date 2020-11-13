@@ -16,8 +16,10 @@
       <%= form.label :new_password_repeat, "New password, again" %>
       <%= form.password_field :new_password_repeat %>
 
-      <%= link_to "Cancel", "/flows", class: "button -stripped" %>
-      <%= form.submit "Update", class: "button" %>
+      <div class="toolbar">
+        <%= form.submit "Update", class: "button" %>
+        <%= link_to "Cancel", "/flows", class: "button -stripped" %>
+      </div>
     <% end %>
   </div>
 </div>

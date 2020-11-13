@@ -11,6 +11,25 @@ function loadRig() {
     confirmation.querySelector("[data-confirmation='hide']").addEventListener("click", function() {
       this.parentElement.classList.remove("-visible");
     });
+
+    confirmation.querySelector("[data-confirmation='action']").addEventListener("click", function() {
+      this.parentElement.classList.remove("-visible");
+    });
+  });
+
+  document.querySelectorAll("form .file").forEach(function(file) {
+    if(file.dataset.rigged === "true")
+      return;
+    
+    file.dataset.rigged = "true";
+    
+    document.querySelector(`input[name='${file.dataset.bind}']`).addEventListener("change", function() {
+      document.querySelector(`form .file[data-bind='${this.id}'] span`).innerText = this.files[0].name;
+    });
+    file.querySelector("button").addEventListener("click", function(event){
+      event.preventDefault();
+      document.querySelector(`input[name='${this.parentElement.dataset.bind}']`).click();
+    });
   });
 }
 

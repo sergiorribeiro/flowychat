@@ -21,137 +21,6 @@ html, body {
   margin-right: auto;
 }
 
-.button {
-  padding: 8px 14px;
-  border: 1px solid $ACCENT_HIGHLIGHT;
-  background-color: $ACCENT;
-  border-radius: 12px;
-  box-shadow: 0px 1px 3px -1px $SHADOW;
-  display: inline-flex;
-  text-decoration: none;
-  transition: all $TRANSITION_TIMING ease-in-out;
-  align-items: center;
-  cursor: pointer;
-  margin-top: 15px;
-
-  div {
-    svg {    
-      path {
-        stroke: $ACCENT_CONTRAST;
-        stroke-width: 2;
-        transition: all $TRANSITION_TIMING ease-in-out;
-      }
-    }
-
-    &:first-child {
-      width: 20px;
-      height: 20px;
-    }
-
-    &:last-child {
-      text-transform: uppercase;
-      color: $ACCENT_CONTRAST;
-      transition: color $TRANSITION_TIMING ease-in-out;
-      font-size: 0.9em;
-      margin-right: 8px;
-      margin-left: 3px;
-    }
-  }
-
-  &:hover{
-    box-shadow: 0px 2px 4px -1px $SHADOW;
-
-    div {
-      color: $ACCENT_HIGHLIGHT;
-
-      svg path {
-        stroke-width: 3;
-        stroke: $ACCENT_HIGHLIGHT;
-      }
-    }
-  }
-
-  &.-green {
-    background-color: $ACTION_GREEN;
-
-    div {
-      svg {    
-        path {
-          stroke: $ACTION_GREEN_CONTRAST;
-        }
-      }
-  
-      &:last-child {
-        color: $ACTION_GREEN_CONTRAST;
-      }
-    }
-  
-    &:hover{
-      div {
-        color: $ACTION_GREEN_HIGHLIGHT;
-  
-        svg path {
-          stroke: $ACTION_GREEN_HIGHLIGHT;
-        }
-      }
-    }
-  }
-}
-
-form {
-  label, div.label {
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  input[type="text"], input[type="password"] {
-    width: 100%;
-    padding: 4px;
-    border-radius: 8px;
-    border: 1px solid $ACCENT;
-    box-sizing: border-box;
-    margin-bottom: 15px;
-    height: 40px;
-    font-size: 17px;
-  }
-
-  input[type="checkbox"] {
-    display: none;
-  }
-
-  input[type="checkbox"] + label {
-    position: relative;
-    width: 50px;
-    height: 25px;
-    background: red;
-    margin-bottom: 15px;
-    border-radius: calc(25px / 2);
-    transition: all $TRANSITION_TIMING ease-in-out;
-
-    &::after {
-      content: '';
-      display: block;
-      position: absolute;
-      width: 25px;
-      height: 25px;
-      background-color: purple;
-      border-radius: 50%;
-      top: 50%;
-      left: 0%;
-      transform: translateY(-50%);
-      transition: all $TRANSITION_TIMING ease-in-out;
-    }
-  }
-
-  input[type="checkbox"]:checked + label {
-    background: green;
-
-    &::after {
-      left: 50%;
-    }
-  }
-}
-
 hr {
   margin: 22px 0;
 }
@@ -236,4 +105,8 @@ hr {
 
 .text_align_center {
   text-align: center;
+}
+
+input, textarea, button, a {
+  outline: none;
 }
