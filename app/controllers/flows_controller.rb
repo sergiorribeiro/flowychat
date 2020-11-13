@@ -22,7 +22,7 @@ class FlowsController < ApplicationController
   def create
     service_result = ::Flowchart::Create.new(create_flow_params, current_user).call
     unless service_result.ok?
-      render "/flows/new", notice: service_result.get
+      redirect_to "/flows/new", notice: service_result.get
     else
       redirect_to "/flows"
     end
@@ -37,7 +37,7 @@ class FlowsController < ApplicationController
     if flow_permissions[:can_edit]
       service_result = ::Flowchart::Update.new(create_flow_params, current_user).call
       unless service_result.ok?
-        render "/flows/edit", notice: service_result.get
+        redirect_to "/flows/#{@flow.identifier}/edit", notice: service_result.get
       else
         redirect_to "/flows"
       end
@@ -55,7 +55,7 @@ class FlowsController < ApplicationController
     if flow_permissions[:can_copy]
       service_result = ::Flowchart::Copy.new(create_flow_params, current_user).call
       unless service_result.ok?
-        render "/gallery", notice: service_result.get
+        redirect_to "/gallery", notice: service_result.get
       else
         redirect_to "/flows"
       end

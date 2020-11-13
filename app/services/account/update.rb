@@ -16,7 +16,7 @@ module Account
       end
 
       unless @current_password.empty? && @new_password.empty?
-        return nok!("Unable to authenticate") unless logged_user.authenticate(@current_password)
+        return nok!("❌ Unable to authenticate") unless logged_user.authenticate(@current_password)
 
         logged_user.update(
           password: @new_password,

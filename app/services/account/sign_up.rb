@@ -10,10 +10,10 @@ module Account
     end
 
     def call
-      return nok!("Empty display name") if @display_name.empty?
-      return nok!("Empty email") if @email.empty?
-      return nok!("Empty password") if @password.empty?
-      return nok!("User already exists") if User.find_by(email: @email.downcase)
+      return nok!("❌ Empty display name") if @display_name.empty?
+      return nok!("❌ Empty email") if @email.empty?
+      return nok!("❌ Empty password") if @password.empty?
+      return nok!("❌ User already exists") if User.find_by(email: @email.downcase)
 
       user = User.create(
         display_name: @display_name,
@@ -23,7 +23,7 @@ module Account
         activation_token: activation_token,
       )
 
-      return nok!("Unable to signup") unless user.errors.count.zero?
+      return nok!("❌ Unable to signup") unless user.errors.count.zero?
 
       UserMailer.with(user: user, activation_link: activation_link).confirmation.deliver_now
 

@@ -26,7 +26,7 @@ module Account
     private
 
     def deny_sign_in
-      nok!("Unable to login")
+      nok!("❌ Unable to login")
     end
   end
 end

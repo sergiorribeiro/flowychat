@@ -13,6 +13,9 @@ module Flowchart
 
     def call
       @flow = Flow.find_by(identifier: @identifier)
+      unless @title.nil?
+        return nok!("❌ Empty flow title") if @title.empty?
+      end
       @flow.title = @title unless @title.nil?
       @flow.brief = @brief unless @brief.nil?
       @flow.descriptor = @descriptor unless @descriptor.nil?

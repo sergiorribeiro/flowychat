@@ -23,7 +23,7 @@ class AccountController < ApplicationController
   def update
     service_result = ::Account::Update.new(myself_params, current_user).call
     unless service_result.ok?
-      render "/form", notice: service_result.get
+      redirect_to "/myself", notice: service_result.get
     else
       redirect_to "/flows"
     end
@@ -32,7 +32,7 @@ class AccountController < ApplicationController
   def sign_in
     service_result = ::Account::SignIn.new(sign_in_params, cookies).call
     unless service_result.ok?
-      render "/sign_in", notice: service_result.get
+      redirect_to "/sign_in", notice: service_result.get
     else
       redirect_to "/flows"
     end
