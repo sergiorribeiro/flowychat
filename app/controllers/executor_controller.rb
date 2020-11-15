@@ -6,7 +6,8 @@ class ExecutorController < ApplicationController
     @flow_id = execution_params.fetch(:identifier, nil)
 
     permission_service = ::Access::FlowPermissions.new(flow, current_user).call
-    return render json: {}, status: 401 unless permission_service.ok?
+    return redirect_to "/404" if flow.nil?
+    return redirect_to "/401" unless permission_service.ok?
 
     flow_permissions = permission_service.get
 

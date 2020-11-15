@@ -9,6 +9,7 @@
     width: 100%;
     opacity: 0;
     transition: opacity $TRANSITION_TIMING ease-in-out;
+    user-select: none;
 
     &.-loaded {
       opacity: 1;
@@ -25,6 +26,7 @@
   top: 5px;
   left: 5px;
   align-items: center;
+  user-select: none;
 
   .exit {
     cursor: pointer;

@@ -263,10 +263,12 @@ body {
     align-items: center;
 
     .image {
+      background-color: $WHITE;
       width: 60%;
       height: 100%;
-      background-size: cover;
+      background-size: contain;
       background-position: center center;
+      background-repeat: no-repeat;
       flex-grow: 1;
       flex-shrink: 0;
     }
@@ -280,7 +282,8 @@ body {
   section#executor {
     &.split_info {
       .image {
-        background-image: url(image_path('homebg.jpg'));
+        background-color: $BG;
+        background-image: url(image_path('executor.png'));
       }
     }
   }
@@ -288,7 +291,7 @@ body {
   section#designer {
     &.split_info {
       .image {
-        background-image: url(image_path('homebg.jpg'));
+        background-image: url(image_path('designer.png'));
       }
     }
   }

@@ -77,9 +77,11 @@ export default function Ctl() {
   function buildFlow(flow) {
     let chat = document.querySelector(".chat");
     let checklist = document.querySelector(".checklist ul");
+    let checklist_wrapper = document.querySelector(".checklist")
   
     chat.innerHTML = "";
     checklist.innerHTML = "";
+    checklist_wrapper.classList.remove("-visible");
   
     flow.nodes.forEach(x=>{
         chat.appendChild(buildNode(x));
@@ -87,6 +89,10 @@ export default function Ctl() {
     flow.checklist.forEach(x=>{
         checklist.appendChild(buildChecklistItem(x));
     });
+
+    if(flow.checklist.length > 0) {
+      checklist_wrapper.classList.add("-visible");
+    }
   }
   
   function stepForward() {

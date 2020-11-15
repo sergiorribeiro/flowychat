@@ -14,7 +14,7 @@ class AccountController < ApplicationController
   def activate
     service_result = ::Account::Activate.new(activate_params).call
     unless service_result.ok?
-      render json: {}, status: 401
+      redirect_to "/401"
     else
       redirect_to "/sign_in"
     end

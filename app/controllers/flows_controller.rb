@@ -30,7 +30,7 @@ class FlowsController < ApplicationController
 
   def update
     permission_service = ::Access::FlowPermissions.new(@flow, current_user).call
-    return render json: {}, status: 401 unless permission_service.ok?
+    return redirect_to "/401" unless permission_service.ok?
 
     flow_permissions = permission_service.get
 
@@ -42,13 +42,13 @@ class FlowsController < ApplicationController
         redirect_to "/flows"
       end
     else
-      render json: {}, status: 401
+      redirect_to "/401"
     end
   end
 
   def copy
     permission_service = ::Access::FlowPermissions.new(@flow, current_user).call
-    return render json: {}, status: 401 unless permission_service.ok?
+    return redirect_to "/401" unless permission_service.ok?
 
     flow_permissions = permission_service.get
 
@@ -60,13 +60,13 @@ class FlowsController < ApplicationController
         redirect_to "/flows"
       end
     else
-      render json: {}, status: 401
+      redirect_to "/401"
     end
   end
 
   def delete
     permission_service = ::Access::FlowPermissions.new(@flow, current_user).call
-    return render json: {}, status: 401 unless permission_service.ok?
+    return redirect_to "/401" unless permission_service.ok?
 
     flow_permissions = permission_service.get
 
@@ -74,7 +74,7 @@ class FlowsController < ApplicationController
       ::Flowchart::Delete.new(delete_flow_params, current_user).call
       redirect_to "/flows"
     else
-      render json: {}, status: 401
+      redirect_to "/401"
     end
   end
 

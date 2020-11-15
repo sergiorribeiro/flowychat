@@ -22,6 +22,10 @@ body {
       flex-grow: 1;
       display: none;
 
+      &.-visible {
+        display: block;
+      }
+
       ul {
           background-color: rgba(0,0,0,.15);
           border-radius: 10px;

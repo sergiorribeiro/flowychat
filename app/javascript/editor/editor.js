@@ -34,7 +34,8 @@ export default function FlowEd() {
   function unblock(callback) {
     setTimeout(() => {
       self.refs.blockpane.classList.remove("-blocking");
-      callback();
+      if(callback)
+        callback();
     },1000);
   }
 

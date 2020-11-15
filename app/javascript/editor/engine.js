@@ -471,7 +471,7 @@ export default function FlowNg() {
 
     self.addStep = function(position) {
       const step = new flowNgin.objects.Step();
-      step.position = flowNgin.helpers.snapPosition(position.subtract(flowNgin._global.offset));
+      step.position = flowNgin.helpers.snapPosition(position);
       step.sequentialId = flowNgin._data.sequencer.use();
       flowNgin._data.steps.push(step);
       return step.id;
