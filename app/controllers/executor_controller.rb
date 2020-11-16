@@ -1,6 +1,7 @@
 class ExecutorController < ApplicationController
   before_action :user_from_cookie
   before_action :set_user
+  after_action :allow_iframe, only: [:index, :resume]
 
   def index
     @flow_id = execution_params.fetch(:identifier, nil)
@@ -62,5 +63,9 @@ class ExecutorController < ApplicationController
 
   def execution
     @execution ||= Execution.active.find_by(identifier: @execution_id)
+  end
+
+  def allow_iframe
+    response.headers.except! "X-Frame-Options"
   end
 end
