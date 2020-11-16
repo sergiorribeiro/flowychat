@@ -53,18 +53,18 @@ export default function Ctl() {
     let exchange = document.createElement("exchange");
     exchange.dataset.id = node.id;
     let him = document.createElement("him");
-    him.innerHTML = node.question;
+    him.innerHTML = node.question.replaceAll("\n","<br/>");
     exchange.appendChild(him);
     if(node.exit !== null){
         let me = document.createElement("me");
-        me.innerHTML = node.exit.label;
+        me.innerHTML = node.exit.label.replaceAll("\n","<br/>");
         exchange.appendChild(me);
     }else{
         let answers = document.createElement("answers");
         answers.classList.add("answers");
         node.exits.forEach(n => {
             let answer = document.createElement("answer");
-            answer.innerHTML = n.label;
+            answer.innerHTML = n.label.replaceAll("\n","<br/>");
             answer.dataset.exitId = n.uid;
             answer.addEventListener("click",stepForward)
             answers.appendChild(answer);
