@@ -5,7 +5,7 @@
       <div>new flow</div>
     </a>
     <% if @flows.count.zero? %>
-      <div>No flows to list</div>
+      <div class="list">No flows to list</div>
     <% else %>
       <div class="list">
         <% @flows.each do |flow| %>
