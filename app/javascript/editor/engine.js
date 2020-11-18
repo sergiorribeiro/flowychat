@@ -244,7 +244,9 @@ export default function FlowNg() {
             exit._temp.yPos = exitPosition;
             exitPosition += halfPadding + exitFontSize;
             if(exit.to) {
-              exit._temp.targetPoint = exit.to.center.add(flowNgin._global.offset);
+              let xPos = self.center.x < exit.to.center.x ? exit.to.position.x : exit.to.position.x + exit.to.size.width; 
+              let touchpoint = new flowNgin.objects.Point(xPos, exit.to.position.y + 18);
+              exit._temp.targetPoint = touchpoint.add(flowNgin._global.offset);
             }
           });
         }
@@ -271,7 +273,7 @@ export default function FlowNg() {
           if(this.exits.length > 0) {
             this.exits.forEach(function(exit){
               if(exit.to) {
-                const exitXStart = (exit._temp.targetPoint.x < self.center.x) ? x : x + self.size.width;
+                const exitXStart = (exit._temp.targetPoint.x < (self.center.x + flowNgin._global.offset.x)) ? x : x + self.size.width;
                 const startPt = new flowNgin.objects.Point(exitXStart, exit._temp.yPos - exitFontSize / 2);
                 const endPt = new flowNgin.objects.Point(exit._temp.targetPoint.x, exit._temp.targetPoint.y);
 
@@ -302,7 +304,10 @@ export default function FlowNg() {
                 }else if(self.is(flowNgin._global.selectedStep)){
                   ctx.strokeStyle = flowNgin._config.EXIT_INBOUND_COLOR;
                   ctx.fillStyle = flowNgin._config.EXIT_INBOUND_COLOR;
-                }else{
+                }else if(flowNgin._global.selectedStep) {
+                  ctx.strokeStyle = "#CCC";
+                  ctx.fillStyle = "#CCC";
+                }else {
                   ctx.strokeStyle = "#000";
                   ctx.fillStyle = "#000";
                 }
@@ -400,12 +405,14 @@ export default function FlowNg() {
                   ctx.fillStyle = flowNgin._config.EXIT_OUTBOUND_COLOR;
                 }else if(self.is(flowNgin._global.selectedStep)){
                   ctx.fillStyle = flowNgin._config.EXIT_INBOUND_COLOR;
+                }else if(flowNgin._global.selectedStep){
+                  ctx.fillStyle = "#CCC";
                 }else{
                   ctx.fillStyle = "#000";
                 }
 
                 ctx.beginPath();
-                const exitXStart = (exit._temp.targetPoint.x < self.center.x) ? x : x + self.size.width;
+                const exitXStart = (exit._temp.targetPoint.x < (self.center.x + flowNgin._global.offset.x)) ? x : x + self.size.width;
                 ctx.arc(exitXStart, exit._temp.yPos - exitFontSize / 2, 3, 0, 2 * Math.PI);
                 ctx.fill();
               }

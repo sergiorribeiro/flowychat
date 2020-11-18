@@ -8,6 +8,10 @@ export default function Ctl() {
     api("get", "/api/executions/:exec_id", null, null, function(data) {
       executor = new ExecNg(JSON.parse(data.flow_descriptor));
       buildFlow(executor.setPath(data.path));
+      if(executor.executionComplete()) {
+        let checklist = document.querySelector(".flow .checklist");
+        window.scroll(0,Math.max(0,checklist.offsetTop));
+      }
     });
 
     document.querySelectorAll(".options input[type='checkbox']").forEach(function(checkbox) {
@@ -99,9 +103,16 @@ export default function Ctl() {
     let exitId = this.dataset.exitId;
     buildFlow(executor.stepForward(exitId));
 
-    let exb = document.querySelectorAll("exchange");
-    if(exb.length > 0)
-        window.scrollTo(0,exb[exb.length-1].offsetTop);
+    let chatBound = document.querySelector(".flow .chat").getBoundingClientRect();
+    let scrollPosition = chatBound.height - window.innerHeight;
+    scrollPosition += 30;
+
+    if(executor.executionComplete()) {
+      let checklist = document.querySelector(".flow .checklist");
+      scrollPosition = checklist.offsetTop;
+    }
+
+    window.scroll(0,Math.max(0,scrollPosition));
 
     api("put", "/api/executions/:exec_id", JSON.stringify({
       path: executor.currentPath.join("/"),

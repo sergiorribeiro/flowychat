@@ -1,5 +1,9 @@
 @import "shared/shared.scss";
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: sans-serif;
   padding: 15px;

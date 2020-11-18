@@ -30,7 +30,8 @@ export default class ExecNg {
         path: [],
         question: step.step,
         exits: step.exits,
-        exit: null
+        exit: null,
+        tasks: step.tasks
       };
     };
 
@@ -58,6 +59,13 @@ export default class ExecNg {
 
   resetExecution = () => {
     this._currentNode = this.startNode();
+    let checklist = [];
+    if(this._currentNode.tasks){
+      this._currentNode.tasks.forEach(t => {
+        checklist.push(t);
+      });
+    }
+    return checklist
   }
 
   stepForward = (id) => {
@@ -68,11 +76,11 @@ export default class ExecNg {
   }
 
   flowThrough = (pathData) => {
-    this.resetExecution();
     let ctl = {
       nodes: [this._currentNode],
-      checklist: []
+      checklist: this.resetExecution()
     };
+
     let path = pathData === "" ? [] : pathData.split("/").reverse();
 
     while(path.length > 0){
@@ -81,7 +89,6 @@ export default class ExecNg {
         throw `Node flow exception: (exit=${exitId} not an exit of id=${this._currentNode.id})`;
       let exit = this._currentNode.exits.find(x => x.uid === exitId);
       let nextNode = this.nodeById(exit.to);
-      let currentNode = this.nodeById(this._currentNode.id);
 
       ctl.nodes[ctl.nodes.length-1].exit = { label: exit.label };
 
