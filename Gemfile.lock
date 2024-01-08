@@ -110,8 +110,10 @@ GEM
       timeout
     net-smtp (0.4.0)
       net-protocol
-    nio4r (2.5.9)
+    nio4r (2.7.0)
     nokogiri (1.15.4-arm64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.15.4-x86_64-linux)
       racc (~> 1.4)
     pg (1.5.4)
     pry (0.14.2)
@@ -120,7 +122,7 @@ GEM
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (5.0.3)
-    puma (4.3.12)
+    puma (5.6.8)
       nio4r (~> 2.0)
     racc (1.7.1)
     rack (2.2.8)
@@ -216,6 +218,7 @@ GEM
 
 PLATFORMS
   arm64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   awesome_print
@@ -227,7 +230,7 @@ DEPENDENCIES
   pg (>= 0.18, < 2.0)
   pry
   pry-rails
-  puma (~> 4.3)
+  puma (~> 5.6)
   rails (~> 6.0.3, >= 6.0.3.3)
   sass-rails (>= 6)
   selenium-webdriver
